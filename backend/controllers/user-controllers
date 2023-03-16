@@ -1,0 +1,72 @@
+const admin = require('firebase-admin');
+const  fetch = require('node-fetch');
+const { URLSearchParams } = require('url');
+
+
+const serviceAccount = require('../files/eyebrowcli-firebase-adminsdk-5w7wj-c9c4045a14');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://eyebrowcli.firebaseio.com'
+});
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDBPrleIBJv89kakAvw5-SZcRxOwG42VEQ",
+    authDomain: "eyebrowcli.firebaseapp.com",
+    projectId: "eyebrowcli",
+    storageBucket: "eyebrowcli.appspot.com",
+    messagingSenderId: "176749062648",
+    appId: "1:176749062648:web:094c3e272ee9928b660e0d"
+  };
+
+const registerUser = (req, res, next) => {
+    const {name, email, password} = req.body;
+    admin.auth().createUser({
+        email: email,
+        password: password,
+        displayName: name,
+        disabled: false
+      })
+        .then((userRecord) => {
+          // User created successfully
+          console.log('Successfully created new user:', userRecord.uid);
+          res.json({success: true});
+        })
+        .catch((error) => {
+          console.error('Error creating new user:', error);
+          res.json({success: false, message: error.errorInfo.message});
+        });
+}
+
+const loginUser = async (req, res, next) => {
+    const {email, password} = req.body;
+    const apiKey = firebaseConfig.apiKey;
+    const endpoint = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
+
+    try {
+        const response = await fetch(endpoint, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            email,
+            password,
+            returnSecureToken: true
+          })
+        });
+    
+        if (response.ok) {
+          const data = await response.json();
+          res.json({success: true, idToken: data.idToken});
+        } else {
+          // Authentication failed, handle the error here
+          res.json({success: false, message: "Authentication error"});
+        }
+      } catch (error) {
+        console.log(error);
+      }
+}
+
+exports.registerUser = registerUser;
+exports.loginUser = loginUser;
