@@ -1,14 +1,63 @@
 import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
+import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
-import LoginButton from "../buttons/LoginButton";
+import LoginButton from "../../buttons/LoginButton";
+import AsyncStorage from '@react-native-async-storage/async-storage';
+import jwtDecode from 'jwt-decode';
 
 function LoginScreen ({navigation}) {
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailFocused, setEmailFocused] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
+    const [isOwner, setIsOwner] = useState(null);
     let token;
+
+    useEffect(()=>{
+
+        const removeToken = async () => {
+            try {
+              await AsyncStorage.removeItem('jwt_token');
+            } catch (e) {
+              console.error(e);
+            }
+          };
+           //removeToken();
+
+        const getToken = async () => {
+            try {
+              const token = await AsyncStorage.getItem('jwt_token');
+              return token;
+            } catch (e) {
+              console.error(e);
+            }
+          };
+      
+          const checkAuthentication = async () => {
+            try{
+              const token = await getToken();
+              if (token) {
+                const decodedToken = jwtDecode(token);
+                if(decodedToken.email == "vlad.charny@gmail.com"){
+                    setIsOwner(true);
+                }
+                else{
+                    setIsOwner(false);
+                }
+              }
+            } catch (err) {
+              console.log(err);
+            }
+          };
+      
+          checkAuthentication();
+    }, []);
+
+    useEffect(()=>{
+        if(isOwner != null){
+            navigation.navigate("home", {isOwner: isOwner});
+        }
+    }, [isOwner]);
 
     function emailFocusHandler () {
         setEmailFocused(true);
@@ -47,9 +96,16 @@ function LoginScreen ({navigation}) {
             }
             else{
                 token = data.idToken;
+                storeToken(token);
                 setEmail("");
                 setPassword("");
-                navigation.navigate("home");
+                const decodedToken = jwtDecode(token);
+                if(decodedToken.email == "vlad.charny@gmail.com"){
+                    setIsOwner(true);
+                }
+                else{
+                    setIsOwner(false);
+                }
             }
         });
     }
@@ -63,6 +119,14 @@ function LoginScreen ({navigation}) {
     function guestHandler () {
 
     }
+
+    const storeToken = async (token) => {
+        try {
+          await AsyncStorage.setItem('jwt_token', token);
+        } catch (e) {
+          console.error(e);
+        }
+    };
 
     return (
         <SafeAreaView style={styles.pageContainer}>

@@ -7,7 +7,7 @@ const serviceAccount = require('../files/eyebrowcli-firebase-adminsdk-5w7wj-c9c4
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://eyebrowcli.firebaseio.com'
+  databaseURL: 'https://eyebrowcli-default-rtdb.firebaseio.com/'
 });
 
 const firebaseConfig = {
@@ -39,6 +39,7 @@ const registerUser = (req, res, next) => {
 }
 
 const loginUser = async (req, res, next) => {
+    console.log("here");
     const {email, password} = req.body;
     const apiKey = firebaseConfig.apiKey;
     const endpoint = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;

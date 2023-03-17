@@ -1,0 +1,8 @@
+const express = require('express');
+const procedureControllers = require('../controllers/procedure-controllers');
+const router = express.Router();
+
+router.post("/add", procedureControllers.addProcedure);
+router.get("/getList", procedureControllers.getList);
+
+module.exports = router;

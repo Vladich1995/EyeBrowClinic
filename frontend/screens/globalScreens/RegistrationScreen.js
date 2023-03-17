@@ -1,7 +1,7 @@
 import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState } from "react";
-import LoginButton from "../buttons/LoginButton";
+import LoginButton from "../../buttons/LoginButton";
 
 function RegistrationScreen ({navigation}) {
     const [name, setName] = useState("");

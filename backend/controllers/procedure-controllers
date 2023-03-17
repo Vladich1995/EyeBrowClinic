@@ -1,0 +1,69 @@
+const admin = require('firebase-admin');
+const  fetch = require('node-fetch');
+const { URLSearchParams } = require('url');
+
+
+const serviceAccount = require('../files/eyebrowcli-firebase-adminsdk-5w7wj-c9c4045a14');
+
+const db = admin.database();
+let ref = db.ref('procedures/');
+
+admin.initializeApp({
+  credential: admin.credential.cert(serviceAccount),
+  databaseURL: 'https://eyebrowcli-default-rtdb.firebaseio.com/'
+}, "procedure");
+
+class Procedure {
+    constructor(pName, pDuration, pPrice, pGoal, pDescription) {
+        this.pName = pName;
+        this.pDuration = pDuration;
+        this.pPrice = pPrice;
+        this.pGoal = pGoal;
+        this.pDescription = pDescription;
+    }
+}
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDBPrleIBJv89kakAvw5-SZcRxOwG42VEQ",
+    authDomain: "eyebrowcli.firebaseapp.com",
+    projectId: "eyebrowcli",
+    storageBucket: "eyebrowcli.appspot.com",
+    messagingSenderId: "176749062648",
+    appId: "1:176749062648:web:094c3e272ee9928b660e0d"
+  };
+
+const addProcedure = (req, res, next) => {
+    ref = db.ref(`procedures/${req.body.pName}`);
+    ref.set(req.body, (error) => {
+        if (error) {
+          console.log('Data could not be saved:' + error);
+          return res.json({success: false, message: error})
+        }
+    }).then(()=>{
+        console.log('Data saved successfully.');
+        return res.json({success: true})
+    });
+
+}
+
+const getList = (req, res, next) => {
+    ref.once("value")
+    .then(function(dataSnapshot) {
+        const procedureList = [];
+        // Handle data
+        dataSnapshot.forEach(function(childSnapshot) {
+            // Access data for each child
+            const childData = childSnapshot.val();
+            const procedure = new Procedure(childData.pName, childData.pDuration, childData.pPrice, childData.pGoal, childData.pDescription);
+            procedureList.push(procedure);
+        });
+        return res.json({procedureList: procedureList, success: true});
+    })
+    .catch(function(error) {
+        console.error(error);
+        return res.json({success: false});
+    });
+}
+
+exports.addProcedure = addProcedure;
+exports.getList = getList;
