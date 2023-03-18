@@ -22,7 +22,8 @@ const styles = StyleSheet.create({
         overflow: "hidden",
         position: "absolute",
         bottom: 50,
-        left: 50
+        left: 50,
+        zIndex: 1
     },
     button: {
         height: 50,

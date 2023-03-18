@@ -16,7 +16,7 @@ const Tab = createMaterialTopTabNavigator();
 function HomeScreen ({route}) {
     if(route.params.isOwner){
         return (
-            <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }}} initialRouteName="manageProcedures">
+            <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} initialRouteName="manageProcedures" >
                 <Tab.Screen name="calendar" component={CalendarScreen} options={{ title: 'Calendar' }} />
                 <Tab.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} />
                 <Tab.Screen name="clinicInfo" component={ClinicInfoScreen} options={{ title: 'Clinic Info' }} />

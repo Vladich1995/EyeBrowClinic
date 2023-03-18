@@ -1,16 +1,18 @@
 const admin = require('firebase-admin');
 const  fetch = require('node-fetch');
 const { URLSearchParams } = require('url');
+const { Storage } = require('@google-cloud/storage');
 
 
 const serviceAccount = require('../files/eyebrowcli-firebase-adminsdk-5w7wj-c9c4045a14');
 
 const db = admin.database();
-let ref = db.ref('procedures/');
+let ref = db.ref('procedures');
 
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
-  databaseURL: 'https://eyebrowcli-default-rtdb.firebaseio.com/'
+  databaseURL: 'https://eyebrowcli-default-rtdb.firebaseio.com/',
+  storageBucket: 'eyebrowcli.appspot.com'
 }, "procedure");
 
 class Procedure {
@@ -32,38 +34,76 @@ const firebaseConfig = {
     appId: "1:176749062648:web:094c3e272ee9928b660e0d"
   };
 
-const addProcedure = (req, res, next) => {
+  const addProcedure = (req, res, next) => {
     ref = db.ref(`procedures/${req.body.pName}`);
-    ref.set(req.body, (error) => {
-        if (error) {
-          console.log('Data could not be saved:' + error);
-          return res.json({success: false, message: error})
-        }
-    }).then(()=>{
+    ref.push(req.body,(error) => {
+      if (error) {
+        console.log('Data could not be saved:' + error);
+        res.json({success: false, message: error})
+      } else {
         console.log('Data saved successfully.');
-        return res.json({success: true})
+      }
+    });
+    res.json({success: true});
+  }
+
+
+
+
+  const getDownloadUrl = async (fileName) => {
+    const bucket = admin.storage().bucket("eyebrowcli.appspot.com");
+    // Create a signed URL with a max age
+    const signedUrl = await bucket.file(fileName).getSignedUrl({
+      action: 'read',
+      expires: '03-31-2023' // Replace with your desired expiration date
     });
 
-}
+    return signedUrl[0];
+  };
 
-const getList = (req, res, next) => {
-    ref.once("value")
-    .then(function(dataSnapshot) {
-        const procedureList = [];
-        // Handle data
-        dataSnapshot.forEach(function(childSnapshot) {
-            // Access data for each child
-            const childData = childSnapshot.val();
-            const procedure = new Procedure(childData.pName, childData.pDuration, childData.pPrice, childData.pGoal, childData.pDescription);
-            procedureList.push(procedure);
+  const getList = (req, res, next) => {
+    const ref = db.ref('procedures');
+    ref.once('value', async function(dataSnapshot) {
+      const procedureList = [];
+      const promises = [];
+  
+      dataSnapshot.forEach(function(childSnapshot) {
+        let childData = childSnapshot.val();
+        const childKey = childSnapshot.key;
+        const firstKey = Object.keys(childData)[0];
+        const promise = getDownloadUrl(`procedures/${childKey}/${firstKey}/pImage`).then((imageUrl)=>{
+          childData[firstKey].pImage = imageUrl;
+          Object.values(childData).forEach(function(procedureData) {
+            procedureList.push({...procedureData, pName: childKey});
+          });
         });
-        return res.json({procedureList: procedureList, success: true});
-    })
-    .catch(function(error) {
-        console.error(error);
-        return res.json({success: false});
+        promises.push(promise);
+      });
+  
+      await Promise.all(promises);
+  
+
+      res.json({procedureList: procedureList, success: true});
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
     });
-}
+  }
+
+
+
+  const deleteProcedure = (req, res, next) => {
+    const {target} = req.body;
+    const ref = db.ref(`procedures/${target}`);
+    ref.remove()
+    .then(() => {
+        console.log("Data removed successfully");
+    })
+    .catch((error) => {
+        console.error("Error removing data:", error);
+    });
+  }
 
 exports.addProcedure = addProcedure;
 exports.getList = getList;
+exports.deleteProcedure = deleteProcedure;

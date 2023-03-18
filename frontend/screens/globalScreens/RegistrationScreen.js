@@ -57,7 +57,7 @@ function RegistrationScreen ({navigation}) {
     }
 
     async function submitHandler () {
-        const response = await fetch("http://192.168.137.154:3000/register/",{
+        const response = await fetch("http://192.168.1.12:3000/register/",{
             method: 'POST',
             headers: {
               Accept: 'application/json',
