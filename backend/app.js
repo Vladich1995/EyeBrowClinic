@@ -4,7 +4,7 @@ const bodyParser = require("body-parser");
 const userRoutes = require("./routes/user-routes");
 const procedureRoutes = require("./routes/procedure-routes");
 
-app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '50mb'}));
 
 app.use("/register", userRoutes);
 app.use("/login", userRoutes);

@@ -16,6 +16,7 @@
     "@react-navigation/material-top-tabs": "^6.6.2",
     "@react-navigation/native": "^6.1.6",
     "@react-navigation/native-stack": "^6.9.12",
+    "base-64": "^1.0.0",
     "expo": "~48.0.5",
     "expo-image-picker": "^14.1.1",
     "expo-linear-gradient": "^12.1.2",

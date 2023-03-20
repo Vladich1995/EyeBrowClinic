@@ -1,11 +1,15 @@
 import { View, ImageBackground, Pressable, StyleSheet, Platform, StatusBar,Dimensions,TouchableWithoutFeedback, Keyboard, Text } from "react-native";
 import { useEffect, useState } from "react";
 import OptionsButton from "../buttons/OptionsButton";
-
+import {decode} from 'base-64';
 
 function ProcedureItem ({procedure, onFocusChange, focusedName, inc}) {
     const [isPressed, setIsPressed] = useState(false);
-
+    const [decodedImage, setDecodedImage] = useState(null);
+    useEffect(()=>{
+         const decoding = decode(procedure.pImage);
+         setDecodedImage(decoding);
+    }, []);
 
     useEffect(()=>{
         if(procedure.pName != focusedName){
@@ -49,7 +53,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc}) {
 
     return (
         <Pressable style={styles.container} onPress={pressHandler} >
-            <ImageBackground source={{ uri: procedure.pImage }} style={styles.image} opacity= {isPressed ? 0.5 : 0.7} >
+            <ImageBackground source={{ uri: `data:image/png;base64,${decodedImage}` }} style={styles.image} opacity= {isPressed ? 0.5 : 0.7} >
                 {!(isPressed) && <Text style={styles.text}>{procedure.pName}</Text>}
                 {isPressed && <View style={styles.buttonContainer}>
                     <OptionsButton text="Delete" onPress={removeProcedureHandler} />

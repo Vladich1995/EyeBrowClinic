@@ -2,6 +2,7 @@ import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,To
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
+import {encode} from 'base-64';
 import LoginButton from "../buttons/LoginButton";
 
 function AddProcedureForm ({cancelHandler,inc}) {
@@ -50,19 +51,35 @@ function AddProcedureForm ({cancelHandler,inc}) {
         }
     }
 
-    async function imageUploadHandler() {
+    const imageUploadHandler = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-          mediaTypes: ImagePicker.MediaTypeOptions.Images,
-          allowsEditing: true,
-          aspect: [4, 3],
-          quality: 1,
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            quality: 1,
+            allowsEditing: true,
+            aspect: [1, 1],
+            base64: false,
         });
-    
+      
         if (!result.canceled) {
-          setPimage(result.assets[0].uri);
+          const asset = result.assets[0];
+          const response = await fetch(asset.uri);
+          const blob = await response.blob();
+          const reader = new FileReader();
+          reader.readAsDataURL(blob);
+          reader.onloadend = () => {
+            const base64data = reader.result.replace("data:", "").replace(/^.+,/, "");
+            const encodedImage = encode(base64data);
+            setPimage(encodedImage);
+          }
         }
       };
-
+      
+      
+      
+      
+      
+      
+      
 
     return (
         <View style={styles.container}>
