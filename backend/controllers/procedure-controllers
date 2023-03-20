@@ -86,9 +86,11 @@ const firebaseConfig = {
     ref.remove()
     .then(() => {
         console.log("Data removed successfully");
+        res.json({success: true});
     })
     .catch((error) => {
         console.error("Error removing data:", error);
+        res.json({success: false});
     });
   }
 
