@@ -5,5 +5,6 @@ const router = express.Router();
 router.post("/add", procedureControllers.addProcedure);
 router.get("/getList", procedureControllers.getList);
 router.post("/delete", procedureControllers.deleteProcedure);
+router.post("/update", procedureControllers.updateProcedure);
 
 module.exports = router;

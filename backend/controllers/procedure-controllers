@@ -94,6 +94,37 @@ const firebaseConfig = {
     });
   }
 
+  const updateProcedure = (req, res, next) => {
+    const {name, property, value} = req.body;
+    const ref = db.ref(`procedures/${name}`);
+    ref.once('value')
+    .then(function(snapshot) {
+      var childData = snapshot.val();
+      const firstKey = Object.keys(childData)[0];
+      const ref2 = db.ref(`procedures/${name}/${firstKey}`);
+      var updates = {};
+      updates[property] = value;
+      ref2.update(updates).then(() => {
+        console.log('Object updated successfully');
+      }).catch((error) => {
+        console.error('Error updating object:', error);
+      });
+    });
+    // ref.on('value', async function(dataSnapshot) {
+    //   dataSnapshot.forEach(function(childSnapshot) {
+    //     let childData = childSnapshot.val();
+    //     const childKey = childSnapshot.key;
+    //     const firstKey = Object.keys(childData)[0];
+    //     console.log(firstKey);
+    //   });
+
+    // }, function(error) {
+    //   console.error(error);
+    //   res.json({success: false});
+    // });
+  }
+
 exports.addProcedure = addProcedure;
 exports.getList = getList;
 exports.deleteProcedure = deleteProcedure;
+exports.updateProcedure = updateProcedure;
