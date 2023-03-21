@@ -4,6 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import AddButton from "../../buttons/AddButton";
 import AddProcedureForm from "../../components/AddProcedureForm";
 import ProcedureItem from "../../components/ProcedureItem";
+import ViewInfo from "../../components/ViewInfo";
 
 function ManageProceduresScreen () {
     const [addProcedure,setAddProcedure] = useState(false);
@@ -11,12 +12,14 @@ function ManageProceduresScreen () {
     const [count, setCount] = useState(0);
     const [isRendered, setIsRendered] = useState(false);
     const [focusedItem, setFocusedItem] = useState(null);
-    
+    const [needView, setNeedView] = useState(false);
+    const [viewProcedure, setViewProcedure] = useState(null);
+    const [needPlus, setNeedPlus] = useState(true);
 
     useEffect(()=>{
         async function displayProcedures () {
             try{
-                const response = await fetch("http://192.168.1.12:3000/procedure/getList").then((response) => {
+                const response = await fetch("http://192.168.137.154:3000/procedure/getList").then((response) => {
                     return response.json();
                 }).then((data) => {
                     setFetchedProcedureList(data.procedureList);
@@ -34,26 +37,43 @@ function ManageProceduresScreen () {
         }
     }, [fetchedProcedureList]);
 
+    useEffect(()=>{
+        if(viewProcedure != null){
+            setNeedView(true);
+            setNeedPlus(false);
+        }
+    }, [viewProcedure]);
+
     function handleFocusChange (name) {
         setFocusedItem(name);
     }
 
+    function viewInfoHandler (procedure) {
+        setViewProcedure(procedure)
+    }
+
+    function closeViewHandler () {
+        setNeedView(false);
+        setViewProcedure(null);
+        setNeedPlus(true);
+    }
 
 
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <SafeAreaView style={styles.page} >
                 <View style={styles.container} >
+                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} />}
                     {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} /> : null}
                     {isRendered && <FlatList
                                         data={fetchedProcedureList}
                                         renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange}
-                                            focusedName={focusedItem} inc={()=>setCount(count+1)}  />}
+                                            focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler}  />}
                                         keyExtractor={item => item.pDescription}
                                         showsVerticalScrollIndicator={false}
                                     />}  
                 </View>
-                {!addProcedure ? <AddButton onPress={setAddProcedure} /> : null}
+                {(needPlus && !addProcedure) ? <AddButton onPress={setAddProcedure} /> : null}
             </SafeAreaView>
         </TouchableWithoutFeedback>
     );

@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
 import {encode} from 'base-64';
+import * as ImageManipulator from 'expo-image-manipulator';
 import LoginButton from "../buttons/LoginButton";
 
 function AddProcedureForm ({cancelHandler,inc}) {
@@ -21,7 +22,7 @@ function AddProcedureForm ({cancelHandler,inc}) {
 
     async function addProcedureHandler() {
         try{
-            const response = await fetch("http://192.168.1.12:3000/procedure/add",{
+            const response = await fetch("http://192.168.137.154:3000/procedure/add",{
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -51,18 +52,45 @@ function AddProcedureForm ({cancelHandler,inc}) {
         }
     }
 
+    // const imageUploadHandler = async () => {
+    //     let result = await ImagePicker.launchImageLibraryAsync({
+    //         mediaTypes: ImagePicker.MediaTypeOptions.Images,
+    //         quality: 1,
+    //         allowsEditing: true,
+    //         aspect: [1, 1],
+    //         base64: false,
+    //     });
+      
+    //     if (!result.canceled) {
+    //       const asset = result.assets[0];
+    //       const response = await fetch(asset.uri);
+    //       const blob = await response.blob();
+    //       const reader = new FileReader();
+    //       reader.readAsDataURL(blob);
+    //       reader.onloadend = () => {
+    //         const base64data = reader.result.replace("data:", "").replace(/^.+,/, "");
+    //         const encodedImage = encode(base64data);
+    //         setPimage(encodedImage);
+    //       }
+    //     }
+    //   };
     const imageUploadHandler = async () => {
         let result = await ImagePicker.launchImageLibraryAsync({
-            mediaTypes: ImagePicker.MediaTypeOptions.Images,
-            quality: 1,
-            allowsEditing: true,
-            aspect: [1, 1],
-            base64: false,
+          mediaTypes: ImagePicker.MediaTypeOptions.Images,
+          quality: 1,
+          allowsEditing: true,
+          aspect: [1, 1],
+          base64: false,
         });
-      
+            
         if (!result.canceled) {
           const asset = result.assets[0];
-          const response = await fetch(asset.uri);
+          const compressedAsset = await ImageManipulator.manipulateAsync(
+            asset.uri,
+            [{ resize: { width: 500 } }],
+            { compress: 0.7, format: ImageManipulator.SaveFormat.JPEG }
+          );
+          const response = await fetch(compressedAsset.uri);
           const blob = await response.blob();
           const reader = new FileReader();
           reader.readAsDataURL(blob);
@@ -73,7 +101,6 @@ function AddProcedureForm ({cancelHandler,inc}) {
           }
         }
       };
-      
       
       
       

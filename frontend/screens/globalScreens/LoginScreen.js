@@ -76,7 +76,7 @@ function LoginScreen ({navigation}) {
     }
 
     async function loginHandler () {
-        const response = await fetch("http://192.168.1.12:3000/login/new",{
+        const response = await fetch("http://192.168.137.154:3000/login/new",{
             method: 'POST',
             headers: {
               Accept: 'application/json',

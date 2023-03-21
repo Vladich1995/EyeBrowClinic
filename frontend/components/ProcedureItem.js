@@ -2,14 +2,17 @@ import { View, ImageBackground, Pressable, StyleSheet, Platform, StatusBar,Dimen
 import { useEffect, useState } from "react";
 import OptionsButton from "../buttons/OptionsButton";
 import {decode} from 'base-64';
+import { Buffer } from 'buffer';
+import * as ImageManipulator from 'expo-image-manipulator';
 
-function ProcedureItem ({procedure, onFocusChange, focusedName, inc}) {
+function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView}) {
     const [isPressed, setIsPressed] = useState(false);
     const [decodedImage, setDecodedImage] = useState(null);
     useEffect(()=>{
          const decoding = decode(procedure.pImage);
          setDecodedImage(decoding);
     }, []);
+
 
     useEffect(()=>{
         if(procedure.pName != focusedName){
@@ -34,7 +37,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc}) {
     }
 
     async function removeProcedureHandler () {
-        const response = await fetch("http://192.168.1.12:3000/procedure/delete",{
+        const response = await fetch("http://192.168.137.154:3000/procedure/delete",{
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -50,6 +53,11 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc}) {
         });
     }
 
+    function viewInfoHandler () {
+        onView(procedure);
+    }
+
+   
 
     return (
         <Pressable style={styles.container} onPress={pressHandler} >
@@ -57,7 +65,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc}) {
                 {!(isPressed) && <Text style={styles.text}>{procedure.pName}</Text>}
                 {isPressed && <View style={styles.buttonContainer}>
                     <OptionsButton text="Delete" onPress={removeProcedureHandler} />
-                    <OptionsButton text="View" />
+                    <OptionsButton text="View" onPress={viewInfoHandler} />
                 </View>}
             </ImageBackground>
         </Pressable>
