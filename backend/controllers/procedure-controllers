@@ -96,32 +96,47 @@ const firebaseConfig = {
 
   const updateProcedure = (req, res, next) => {
     const {name, property, value} = req.body;
-    const ref = db.ref(`procedures/${name}`);
-    ref.once('value')
-    .then(function(snapshot) {
-      var childData = snapshot.val();
-      const firstKey = Object.keys(childData)[0];
-      const ref2 = db.ref(`procedures/${name}/${firstKey}`);
-      var updates = {};
-      updates[property] = value;
-      ref2.update(updates).then(() => {
-        console.log('Object updated successfully');
-      }).catch((error) => {
-        console.error('Error updating object:', error);
-      });
-    });
-    // ref.on('value', async function(dataSnapshot) {
-    //   dataSnapshot.forEach(function(childSnapshot) {
-    //     let childData = childSnapshot.val();
-    //     const childKey = childSnapshot.key;
-    //     const firstKey = Object.keys(childData)[0];
-    //     console.log(firstKey);
-    //   });
-
-    // }, function(error) {
-    //   console.error(error);
-    //   res.json({success: false});
-    // });
+    if(property == "pName"){
+      const ref = db.ref(`procedures`);
+      try{
+        ref.child(`${name}`).once('value', function(snapshot) {
+          const oldData = snapshot.val();
+          const firstKey = Object.keys(oldData)[0];
+          const newData = {};
+          newData[`${value}`] = oldData;
+          newData[`${value}`][`${firstKey}`][`${property}`] = value;
+          ref.update(newData);
+          ref.child(name).remove();
+        });
+        res.json({success: true});
+      } catch (err) {
+        console.log(err);
+        res.json({success: false});
+      }
+    }
+    else{
+      try{
+        const ref = db.ref(`procedures/${name}`);
+        ref.once('value')
+        .then(function(snapshot) {
+          var childData = snapshot.val();
+          const childKey = snapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          const ref2 = db.ref(`procedures/${name}/${firstKey}`);
+          var updates = {};
+          updates[property] = value;
+          ref2.update(updates).then(() => {
+            console.log(`${property} updated successfully`);
+          }).catch((error) => {
+            console.error(`Error updating ${property} prop:`, error);
+          });
+        });
+        res.json({success: true});
+      } catch (err) {
+        console.log(err);
+        res.json({success: false});
+      }
+    }
   }
 
 exports.addProcedure = addProcedure;

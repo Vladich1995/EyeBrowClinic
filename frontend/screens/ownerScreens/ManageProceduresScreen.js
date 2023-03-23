@@ -6,7 +6,7 @@ import AddProcedureForm from "../../components/AddProcedureForm";
 import ProcedureItem from "../../components/ProcedureItem";
 import ViewInfo from "../../components/ViewInfo";
 
-function ManageProceduresScreen () {
+function ManageProceduresScreen ({route}) {
     const [addProcedure,setAddProcedure] = useState(false);
     const [fetchedProcedureList, setFetchedProcedureList] = useState(null);
     const [count, setCount] = useState(0);
@@ -15,6 +15,8 @@ function ManageProceduresScreen () {
     const [needView, setNeedView] = useState(false);
     const [viewProcedure, setViewProcedure] = useState(null);
     const [needPlus, setNeedPlus] = useState(true);
+
+    console.log(route);
 
     useEffect(()=>{
         async function displayProcedures () {
@@ -59,11 +61,12 @@ function ManageProceduresScreen () {
     }
 
 
+
     return (
         <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
             <SafeAreaView style={styles.page} >
                 <View style={styles.container} >
-                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} />}
+                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} />}
                     {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} /> : null}
                     {isRendered && <FlatList
                                         data={fetchedProcedureList}

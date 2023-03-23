@@ -11,6 +11,7 @@ function LoginScreen ({navigation}) {
     const [emailFocused, setEmailFocused] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [isOwner, setIsOwner] = useState(null);
+    const [userEmail, setUserEmail] = useState("");
     let token;
 
     useEffect(()=>{
@@ -44,6 +45,7 @@ function LoginScreen ({navigation}) {
                 else{
                     setIsOwner(false);
                 }
+                setUserEmail(decodedToken.email);
               }
             } catch (err) {
               console.log(err);
@@ -55,7 +57,7 @@ function LoginScreen ({navigation}) {
 
     useEffect(()=>{
         if(isOwner != null){
-            navigation.navigate("home", {isOwner: isOwner});
+            navigation.navigate("home", {isOwner: isOwner, email: userEmail});
         }
     }, [isOwner]);
 

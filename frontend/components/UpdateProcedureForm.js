@@ -2,9 +2,8 @@ import { SafeAreaView, View, Alert, StyleSheet, Picker, Button,TextInput,Touchab
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-function UpdateProcedureForm ({prop, cancel, procedure}) {
+function UpdateProcedureForm ({prop, cancel, procedure, inc, pageUpdate}) {
     const [title, setTitle] = useState("");
-    const [needUpdateImage, setNeedUpdateImage] = useState(false);
     const [newValue, setNewValue] = useState("");
     
     useEffect(()=>{
@@ -22,9 +21,6 @@ function UpdateProcedureForm ({prop, cancel, procedure}) {
         }
         if(prop == "pDescription"){
             setTitle("הסבר על הטיפול");
-        }
-        if(prop == "pImage"){
-            setNeedUpdateImage(true);
         }
     },[]);
 
@@ -46,7 +42,11 @@ function UpdateProcedureForm ({prop, cancel, procedure}) {
           }).then((response) => {
             return response.json();
         }).then((data) => {
-            console.log(data.message);
+            if(data.success){
+                inc();
+                pageUpdate(prop, newValue);
+            }
+            cancelHandler();
         });
     }
 

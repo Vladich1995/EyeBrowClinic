@@ -8,6 +8,7 @@ import * as ImageManipulator from 'expo-image-manipulator';
 function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView}) {
     const [isPressed, setIsPressed] = useState(false);
     const [decodedImage, setDecodedImage] = useState(null);
+
     useEffect(()=>{
          const decoding = decode(procedure.pImage);
          setDecodedImage(decoding);
