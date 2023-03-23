@@ -6,7 +6,7 @@ import {encode} from 'base-64';
 import * as ImageManipulator from 'expo-image-manipulator';
 import LoginButton from "../buttons/LoginButton";
 
-function AddProcedureForm ({cancelHandler,inc}) {
+function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading}) {
     const [procedureName, setProcedureName] = useState("");
     const [procedureDuration, setProcedureDuration] = useState("");
     const [procedurePrice, setProcedurePrice] = useState("");
@@ -21,6 +21,7 @@ function AddProcedureForm ({cancelHandler,inc}) {
     const [descriptionFocused, setDescriptionFocused] = useState(false);
 
     async function addProcedureHandler() {
+        startLoading();
         try{
             const response = await fetch("http://192.168.137.154:3000/procedure/add",{
             method: 'POST',

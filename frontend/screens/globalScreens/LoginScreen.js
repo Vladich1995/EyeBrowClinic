@@ -23,7 +23,7 @@ function LoginScreen ({navigation}) {
               console.error(e);
             }
           };
-           //removeToken();
+           removeToken();
 
         const getToken = async () => {
             try {
@@ -39,13 +39,13 @@ function LoginScreen ({navigation}) {
               const token = await getToken();
               if (token) {
                 const decodedToken = jwtDecode(token);
+                setUserEmail(decodedToken.email);
                 if(decodedToken.email == "vlad.charny@gmail.com"){
                     setIsOwner(true);
                 }
                 else{
                     setIsOwner(false);
                 }
-                setUserEmail(decodedToken.email);
               }
             } catch (err) {
               console.log(err);

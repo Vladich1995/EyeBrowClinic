@@ -5,7 +5,7 @@ import {decode} from 'base-64';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView}) {
+function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView, startLoading, isOwner, email}) {
     const [isPressed, setIsPressed] = useState(false);
     const [decodedImage, setDecodedImage] = useState(null);
 
@@ -38,6 +38,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView}) {
     }
 
     async function removeProcedureHandler () {
+        startLoading();
         const response = await fetch("http://192.168.137.154:3000/procedure/delete",{
             method: 'POST',
             headers: {
@@ -58,6 +59,10 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView}) {
         onView(procedure);
     }
 
+    function orderProcedureHandler () {
+        
+    }
+
    
 
     return (
@@ -65,7 +70,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView}) {
             <ImageBackground source={{ uri: `data:image/png;base64,${decodedImage}` }} style={styles.image} opacity= {isPressed ? 0.5 : 0.7} >
                 {!(isPressed) && <Text style={styles.text}>{procedure.pName}</Text>}
                 {isPressed && <View style={styles.buttonContainer}>
-                    <OptionsButton text="Delete" onPress={removeProcedureHandler} />
+                    {isOwner ? <OptionsButton text="Delete" onPress={removeProcedureHandler} /> : <OptionsButton text="Order" onPress={orderProcedureHandler} /> }
                     <OptionsButton text="View" onPress={viewInfoHandler} />
                 </View>}
             </ImageBackground>

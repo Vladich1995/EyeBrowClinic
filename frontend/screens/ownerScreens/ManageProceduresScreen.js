@@ -1,4 +1,4 @@
-import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,FlatList,TouchableWithoutFeedback, Keyboard, Text, ScrollView } from "react-native";
+import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,FlatList,TouchableWithoutFeedback, Keyboard, Text, ActivityIndicator } from "react-native";
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import AddButton from "../../buttons/AddButton";
@@ -15,8 +15,11 @@ function ManageProceduresScreen ({route}) {
     const [needView, setNeedView] = useState(false);
     const [viewProcedure, setViewProcedure] = useState(null);
     const [needPlus, setNeedPlus] = useState(true);
+    const [isLoading, setIsLoading] = useState(true);
+    const [email, setEmail] = useState(route.params["email"]);
+    const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
 
-    console.log(route);
+    
 
     useEffect(()=>{
         async function displayProcedures () {
@@ -36,6 +39,7 @@ function ManageProceduresScreen ({route}) {
     useEffect(()=>{
         if(fetchedProcedureList != null){
             setIsRendered(true);
+            setIsLoading(false);
         }
     }, [fetchedProcedureList]);
 
@@ -60,29 +64,41 @@ function ManageProceduresScreen ({route}) {
         setNeedPlus(true);
     }
 
-
-
-    return (
-        <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-            <SafeAreaView style={styles.page} >
-                <View style={styles.container} >
-                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} />}
-                    {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} /> : null}
-                    {isRendered && <FlatList
-                                        data={fetchedProcedureList}
-                                        renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange}
-                                            focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler}  />}
-                                        keyExtractor={item => item.pDescription}
-                                        showsVerticalScrollIndicator={false}
-                                    />}  
-                </View>
-                {(needPlus && !addProcedure) ? <AddButton onPress={setAddProcedure} /> : null}
-            </SafeAreaView>
-        </TouchableWithoutFeedback>
-    );
+    if(isLoading){
+        return(
+            <View style={styles.loadingContainer}>
+                <ActivityIndicator size="large" color="#0000ff" />
+            </View>
+        );
+    }
+    else {
+        return (
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <SafeAreaView style={styles.page} >
+                    <View style={styles.container} >
+                        {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} />}
+                        {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} /> : null}
+                        {isRendered && <FlatList
+                                            data={fetchedProcedureList}
+                                            renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} isOwner={isOwner} email={email}
+                                                focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
+                                            keyExtractor={item => item.pDescription}
+                                            showsVerticalScrollIndicator={false}
+                                        />}  
+                    </View>
+                    {(needPlus && !addProcedure && isOwner) ? <AddButton onPress={setAddProcedure} /> : null}
+                </SafeAreaView>
+            </TouchableWithoutFeedback>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
+    loadingContainer: {
+        flex: 1,
+        justifyContent: "center",
+        alignItems: "center"
+    },
     container: {
         flex: 1,
         alignItems: "center",

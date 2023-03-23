@@ -6,7 +6,7 @@ import {encode} from 'base-64';
 import * as ImageManipulator from 'expo-image-manipulator';
 import UpdateProcedureForm from "./UpdateProcedureForm";
 
-function ViewInfo ({procedure, onClose, inc}) { 
+function ViewInfo ({procedure, onClose, inc, isOwner}) { 
     const [propToUpdate, setPropToUpdate] = useState(null);
     const [updateImage, setUpdateImage] = useState(false);
     const [name, setName] = useState(procedure.pName);
@@ -98,7 +98,7 @@ function ViewInfo ({procedure, onClose, inc}) {
                     <Pressable style={styles.titleContainer} android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pName")} >
                         <Text style={styles.title} >{name}</Text>
                     </Pressable>
-                    <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pPrice")} >
+                    <Pressable android_ripple={{color: "sky-blue"}}  onLongPress={()=>setPropToUpdate("pPrice")} >
                         <Text style={styles.price} >מחיר: {price}</Text>
                     </Pressable>
                     <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pDuration")} >
@@ -111,7 +111,7 @@ function ViewInfo ({procedure, onClose, inc}) {
                         <Text style={styles.description} >על הטיפול: {description}</Text>
                     </Pressable>
                     <View style={styles.buttonsContainer}>
-                        <Button title="החלפת תמונה" onPress={()=>setUpdateImage(true)} />
+                        {isOwner && <Button title="החלפת תמונה" onPress={()=>setUpdateImage(true)} />}
                         <Button title="סגירה" onPress={()=>onClose()} />
                     </View>
                 </LinearGradient>
