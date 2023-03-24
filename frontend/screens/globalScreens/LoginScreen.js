@@ -23,7 +23,7 @@ function LoginScreen ({navigation}) {
               console.error(e);
             }
           };
-           removeToken();
+           //removeToken();
 
         const getToken = async () => {
             try {

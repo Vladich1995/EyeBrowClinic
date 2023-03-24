@@ -1,0 +1,78 @@
+const admin = require('firebase-admin');
+const  fetch = require('node-fetch');
+const { URLSearchParams } = require('url');
+const { Storage } = require('@google-cloud/storage');
+
+const serviceAccount = require('../files/eyebrowcli-firebase-adminsdk-5w7wj-c9c4045a14');
+
+const db = admin.database();
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://eyebrowcli-default-rtdb.firebaseio.com/',
+    storageBucket: 'eyebrowcli.appspot.com'
+  }, "certificate");
+
+const storage = new Storage({
+  projectId: 'eyebrowcli',
+  keyFilename: serviceAccount
+});
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDBPrleIBJv89kakAvw5-SZcRxOwG42VEQ",
+    authDomain: "eyebrowcli.firebaseapp.com",
+    projectId: "eyebrowcli",
+    storageBucket: "eyebrowcli.appspot.com",
+    messagingSenderId: "176749062648",
+    appId: "1:176749062648:web:094c3e272ee9928b660e0d"
+  };
+
+const addCertificate = (req, res, next) => {
+    const ref = db.ref('certificates');
+    ref.push(req.body,(error) => {
+        if (error) {
+          console.log('Certificate could not be saved:' + error);
+          res.json({success: false, message: error})
+        } else {
+          console.log('Certificate saved successfully.');
+        }
+      });
+      res.json({success: true});
+}
+
+const getCertificates = (req, res, next) => {
+    const ref = db.ref('certificates');
+    ref.once('value', async function(dataSnapshot) {
+        const certificates = [];
+    
+        dataSnapshot.forEach(function(childSnapshot) {
+            let childData = childSnapshot.val();
+            const childKey = childSnapshot.key;
+            const firstKey = Object.keys(childData)[0];
+            certificates.push({url: childData[firstKey], key: childKey});
+        });
+        res.json({certificates: certificates, success: true});
+      }, function(error) {
+        console.error(error);
+        res.json({success: false});
+      });
+}
+
+const deleteCertificate = (req, res, next) => {
+    const {target} = req.body;
+    const ref = db.ref(`certificates/${target}`);
+    ref.remove()
+    .then(() => {
+        console.log("Data removed successfully");
+        res.json({success: true});
+    })
+    .catch((error) => {
+        console.error("Error removing data:", error);
+        res.json({success: false});
+    });
+}
+
+exports.addCertificate = addCertificate;
+exports.getCertificates = getCertificates;
+exports.deleteCertificate = deleteCertificate;

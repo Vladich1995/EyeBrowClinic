@@ -73,22 +73,20 @@ function ManageProceduresScreen ({route}) {
     }
     else {
         return (
-            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <SafeAreaView style={styles.page} >
-                    <View style={styles.container} >
-                        {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} />}
-                        {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} /> : null}
-                        {isRendered && <FlatList
-                                            data={fetchedProcedureList}
-                                            renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} isOwner={isOwner} email={email}
-                                                focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
-                                            keyExtractor={item => item.pDescription}
-                                            showsVerticalScrollIndicator={false}
-                                        />}  
-                    </View>
-                    {(needPlus && !addProcedure && isOwner) ? <AddButton onPress={setAddProcedure} /> : null}
-                </SafeAreaView>
-            </TouchableWithoutFeedback>
+            <SafeAreaView style={styles.page} >
+                <View style={styles.container} >
+                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} />}
+                    {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} /> : null}
+                    {isRendered && <FlatList
+                                        data={fetchedProcedureList}
+                                        renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} isOwner={isOwner} email={email}
+                                        focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
+                                        keyExtractor={item => item.pDescription}
+                                        showsVerticalScrollIndicator={false}
+                                    />}  
+                </View>
+                {(needPlus && !addProcedure && isOwner) ? <AddButton onPress={setAddProcedure} /> : null}
+            </SafeAreaView>
         );
     }
 }

@@ -1,0 +1,9 @@
+const express = require('express');
+const aboutControllers = require('../controllers/about-controllers');
+const router = express.Router();
+
+router.post("/add", aboutControllers.addCertificate);
+router.get("/get", aboutControllers.getCertificates);
+router.post("/delete", aboutControllers.deleteCertificate);
+
+module.exports = router;

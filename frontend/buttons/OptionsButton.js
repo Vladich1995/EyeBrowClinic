@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
         opacity: 0.5
     },
     text: {
-        fontSize: 20,
+        fontSize: 25,
         color: "white",
     }
 });

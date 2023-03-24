@@ -1,4 +1,4 @@
-import {View, Text, StyleSheet, Button, Pressable, TouchableWithoutFeedback} from "react-native";
+import {View, Text,ScrollView, StyleSheet, Button, Pressable, TouchableWithoutFeedback} from "react-native";
 import { useState, useEffect } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
@@ -15,6 +15,7 @@ function ViewInfo ({procedure, onClose, inc, isOwner}) {
     const [goal, setGoal] = useState(procedure.pGoal);
     const [description, setDescription] = useState(procedure.pDescription);
     const [pImage, setPimage] = useState(null);
+
 
     useEffect(()=>{
         async function update () {
@@ -90,47 +91,78 @@ function ViewInfo ({procedure, onClose, inc, isOwner}) {
           }
     }
 
-    if(!updateImage){
-        return (
-            <View style={styles.container}>
-                <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
-                    {(propToUpdate != null) && <UpdateProcedureForm prop={propToUpdate} cancel={()=>setPropToUpdate(null)} procedure={procedure} inc={()=>inc()} pageUpdate={setNewValue} /> }
-                    <Pressable style={styles.titleContainer} android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pName")} >
-                        <Text style={styles.title} >{name}</Text>
-                    </Pressable>
-                    <Pressable android_ripple={{color: "sky-blue"}}  onLongPress={()=>setPropToUpdate("pPrice")} >
-                        <Text style={styles.price} >מחיר: {price}</Text>
-                    </Pressable>
-                    <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pDuration")} >
-                        <Text style={styles.duration} >זמן מוערך: {duration}</Text>
-                    </Pressable>
-                    <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pGoal")} >
-                        <Text style={styles.goal} >מטרת הטיפול: {goal}</Text>
-                    </Pressable>
-                    <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pDescription")} >
-                        <Text style={styles.description} >על הטיפול: {description}</Text>
-                    </Pressable>
-                    <View style={styles.buttonsContainer}>
-                        {isOwner && <Button title="החלפת תמונה" onPress={()=>setUpdateImage(true)} />}
-                        <Button title="סגירה" onPress={()=>onClose()} />
-                    </View>
-                </LinearGradient>
-            </View>
-        );
+    if(isOwner){
+        if(!updateImage){
+            return (
+                <View style={styles.container}>
+                    <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                        {(propToUpdate != null) && <UpdateProcedureForm prop={propToUpdate} cancel={()=>setPropToUpdate(null)} procedure={procedure} inc={()=>inc()} pageUpdate={setNewValue} /> }
+                        <ScrollView style={styles.scroll} scrollEventThrottle={25}>
+                            <Pressable style={styles.titleContainer} android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pName")} >
+                                <Text style={styles.title} >{name}</Text>
+                            </Pressable>
+                            <Pressable android_ripple={{color: "sky-blue"}}  onLongPress={()=>setPropToUpdate("pPrice")} >
+                                <Text style={styles.price} >מחיר: {price}</Text>
+                            </Pressable>
+                            <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pDuration")} >
+                                <Text style={styles.duration} >זמן מוערך: {duration}</Text>
+                            </Pressable>
+                            <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pGoal")} >
+                                <Text style={styles.goal} >מטרת הטיפול: {goal}</Text>
+                            </Pressable>
+                            <Pressable android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pDescription")} >
+                                <Text style={styles.description} >על הטיפול: {description}</Text>
+                            </Pressable>
+                        </ScrollView>
+                        <View style={styles.buttonsContainer}>
+                            {isOwner && <Button title="החלפת תמונה" onPress={()=>setUpdateImage(true)} />}
+                            <Button title="סגירה" onPress={()=>onClose()} />
+                        </View>
+                    </LinearGradient>
+                </View>
+            );
+        }
+        else{
+            return (
+                <View style={styles.container}>
+                    <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                        <View style={styles.imageButtons}>
+                            <Button title="Browse" onPress={imageUpdateHandler} />
+                            <Button title="cancel" onPress={()=>setUpdateImage(false)} />
+                        </View>
+                    </LinearGradient>
+                </View>
+            );
+        }
     }
     else{
         return (
             <View style={styles.container}>
                 <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
-                    <View style={styles.imageButtons}>
-                        <Button title="Browse" onPress={imageUpdateHandler} />
-                        <Button title="cancel" onPress={()=>setUpdateImage(false)} />
+                    <ScrollView style={styles.scroll} scrollEventThrottle={25}>
+                    <View style={styles.titleContainer} >
+                        <Text style={styles.title} >{name}</Text>
                     </View>
+                    <View >
+                        <Text style={styles.price} >מחיר: {price}</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.duration} >זמן מוערך: {duration}</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.goal} >מטרת הטיפול: {goal}</Text>
+                    </View>
+                    <View>
+                        <Text style={styles.description} >על הטיפול: {description}</Text>
+                    </View>
+                    </ScrollView>
                 </LinearGradient>
+                <View style={styles.buttonsContainer}>
+                        <Button title="סגירה" onPress={()=>onClose()} />
+                </View>
             </View>
         );
-    }
-    
+     }
 }
 
 const styles = StyleSheet.create({
@@ -156,22 +188,25 @@ const styles = StyleSheet.create({
         alignItems: "center",
        
     },
-    price: {
+    priceContainer: {
 
     },
-    duration: {
+    durationContainer: {
 
     },
-    goal: {
+    goalContainer: {
 
     },
     description: {
-        marginTop: 20
+        flex: 1
     },
     buttonsContainer: {
         width: "100%",
         position: "absolute",
         bottom: 0,
+    },
+    scroll: {
+        borderRadius: 20,
     }
 });
 
