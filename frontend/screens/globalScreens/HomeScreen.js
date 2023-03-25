@@ -1,9 +1,6 @@
 import {NavigationContainer} from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {View, Text, StyleSheet, ActivityIndicator} from "react-native";
-import ProcedureScreen from "../userScreens/ProcedureScreen";
-import PersonalScreen from "../userScreens/PersonalScreen";
-import AboutScreen from "../userScreens/AboutScreen";
 import ClinicInfoScreen from "../ownerScreens/ClinicInfoScreen";
 import HistoryScreen from "../ownerScreens/HistoryScreen";
 import ManageProceduresScreen from "../ownerScreens/ManageProceduresScreen";

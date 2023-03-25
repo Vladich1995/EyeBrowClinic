@@ -2,44 +2,48 @@ import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,Ac
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import AddButton from "../../buttons/AddButton";
-import AddCertificateForm from "../../components/AddCertificateForm";
-import CertificateItem from "../../components/CertificateItem";
+import AddGalleryForm from "../../components/AddGalleryForm";
+import GalleryItem from "../../components/GalleryItem";
 
-function CertificatesScreen ({route}) {
+function GalleryScreen ({route}) {
     const [isLoading, setIsLoading] = useState(false);
     const [isRendered, setIsRendered] = useState(false);
     const [needPlus, setNeedPlus] = useState(true);
-    const [addCertificate, setAddCertificate] = useState(false);
-    const [fetchedCertificates, setFetchedCertificates] = useState(null);
+    const [addGallery, setAddGallery] = useState(false);
+    const [fetchedGallery, setFetchedGallery] = useState(null);
     const [count, setCount] = useState(0);
     const [focusedItem, setFocusedItem] = useState(null);
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
+    const [type, setType] = useState(route.params["type"]);
+
+    const keyExtractor = (item, index) => item.id;
+    
 
     useEffect(()=>{
-        async function getCertificates () {
+        async function getGallery () {
             try{
-                const response = await fetch("http://192.168.137.154:3000/certificate/get").then((response) => {
+                const response = await fetch((type == "certificates") ? "http://192.168.1.12:3000/certificate/get" : "http://192.168.1.12:3000/portfolio/getportfolio").then((response) => {
                     return response.json();
                 }).then((data) => {
-                    setFetchedCertificates(data.certificates);
+                    setFetchedGallery(data.images);
                 });
             } catch (err) {
                 console.log(err);
             }
-        }
-        getCertificates();
-    },[count]);
+        }   
+        getGallery();
+    },[count, type]);
 
     useEffect(()=>{
-        if(fetchedCertificates != null){
+        if(fetchedGallery != null){
             setIsRendered(true);
             setIsLoading(false);
         }
-    }, [fetchedCertificates]);
+    }, [fetchedGallery]);
 
 
     function cancelAddHandler () {
-        setAddCertificate(false);
+        setAddGallery(false);
         setNeedPlus(true);
     }
 
@@ -59,15 +63,16 @@ function CertificatesScreen ({route}) {
         return(
             <SafeAreaView style={styles.page}>
                 <View style={styles.container} >
-                    {addCertificate && <AddCertificateForm onCancel={cancelAddHandler} inc={()=>setCount(count+1)} />}
+                    {addGallery && <AddGalleryForm onCancel={cancelAddHandler} inc={()=>setCount(count+1)} type={type} />}
                     {isRendered && <FlatList
-                                        data={fetchedCertificates}
-                                        renderItem={({item}) => <CertificateItem certificate={item} onFocusChange={handleFocusChange} isOwner={isOwner}
+                                        data={fetchedGallery}
+                                        renderItem={({item}) => <GalleryItem galleryItem={item} onFocusChange={handleFocusChange} isOwner={isOwner} type={type}
                                         focusedName={focusedItem} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
-                                        keyExtractor={item => item.pDescription}
-                                        showsVerticalScrollIndicator={false}
+                                        keyExtractor={keyExtractor}
+                                        showsVerticalScrollIndicator={false} 
+                                        horizontal={(type=="portfolio") && true}
                                     />}
-                    {(needPlus && !addCertificate && isOwner) ? <AddButton onPress={setAddCertificate} /> : null}
+                    {(needPlus && !addGallery && isOwner) ? <AddButton onPress={setAddGallery} /> : null}
                 </View>
             </SafeAreaView>
         );
@@ -91,4 +96,4 @@ const styles = StyleSheet.create({
     },
 });
 
-export default CertificatesScreen;
+export default GalleryScreen;

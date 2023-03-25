@@ -10,11 +10,8 @@ app.use(bodyParser.json({limit: '50mb'}));
 app.use("/register", userRoutes);
 app.use("/login", userRoutes);
 app.use("/procedure", procedureRoutes);
-app.use("/procedure", procedureRoutes);
-app.use("/procedure", procedureRoutes);
 app.use("/certificate", aboutRoutes);
-app.use("/certificate", aboutRoutes);
-app.use("/certificate", aboutRoutes);
+app.use("/portfolio", aboutRoutes);
 
 
 app.listen(3000, function () {

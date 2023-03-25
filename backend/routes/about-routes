@@ -6,4 +6,8 @@ router.post("/add", aboutControllers.addCertificate);
 router.get("/get", aboutControllers.getCertificates);
 router.post("/delete", aboutControllers.deleteCertificate);
 
+router.post("/addportfolio", aboutControllers.addPortfolio);
+router.get("/getportfolio", aboutControllers.getPortfolio);
+router.post("/deleteportfolio", aboutControllers.deletePortfolio);
+
 module.exports = router;

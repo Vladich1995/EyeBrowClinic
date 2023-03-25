@@ -52,7 +52,7 @@ const getCertificates = (req, res, next) => {
             const firstKey = Object.keys(childData)[0];
             certificates.push({url: childData[firstKey], key: childKey});
         });
-        res.json({certificates: certificates, success: true});
+        res.json({images: certificates, success: true});
       }, function(error) {
         console.error(error);
         res.json({success: false});
@@ -73,6 +73,54 @@ const deleteCertificate = (req, res, next) => {
     });
 }
 
+const addPortfolio = (req, res, next) => {
+  const ref = db.ref('portfolio');
+    ref.push(req.body,(error) => {
+        if (error) {
+          console.log('Portfolio item could not be saved:' + error);
+          res.json({success: false, message: error})
+        } else {
+          console.log('Portfolio item saved successfully.');
+        }
+      });
+      res.json({success: true});
+}
+
+const getPortfolio = (req, res, next) => {
+  const ref = db.ref('portfolio');
+    ref.once('value', async function(dataSnapshot) {
+        const portfolio = [];
+    
+        dataSnapshot.forEach(function(childSnapshot) {
+            let childData = childSnapshot.val();
+            const childKey = childSnapshot.key;
+            const firstKey = Object.keys(childData)[0];
+            portfolio.push({url: childData[firstKey], key: childKey});
+        });
+        res.json({images: portfolio, success: true});
+      }, function(error) {
+        console.error(error);
+        res.json({success: false});
+      });
+}
+
+const deletePortfolio = (req, res, next) => {
+  const {target} = req.body;
+    const ref = db.ref(`portfolio/${target}`);
+    ref.remove()
+    .then(() => {
+        console.log("Portfolio item removed successfully");
+        res.json({success: true});
+    })
+    .catch((error) => {
+        console.error("Error removing portfolio item:", error);
+        res.json({success: false});
+    });
+}
+
 exports.addCertificate = addCertificate;
 exports.getCertificates = getCertificates;
 exports.deleteCertificate = deleteCertificate;
+exports.addPortfolio = addPortfolio;
+exports.getPortfolio = getPortfolio;
+exports.deletePortfolio = deletePortfolio;

@@ -39,7 +39,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onView, sta
 
     async function removeProcedureHandler () {
         startLoading();
-        const response = await fetch("http://192.168.137.154:3000/procedure/delete",{
+        const response = await fetch("http://192.168.1.12:3000/procedure/delete",{
             method: 'POST',
             headers: {
               Accept: 'application/json',

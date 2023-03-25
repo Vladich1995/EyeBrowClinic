@@ -19,12 +19,12 @@ function ManageProceduresScreen ({route}) {
     const [email, setEmail] = useState(route.params["email"]);
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
 
-    
+    const keyExtractor = (item, index) => item.id;
 
     useEffect(()=>{
         async function displayProcedures () {
             try{
-                const response = await fetch("http://192.168.137.154:3000/procedure/getList").then((response) => {
+                const response = await fetch("http://192.168.1.12:3000/procedure/getList").then((response) => {
                     return response.json();
                 }).then((data) => {
                     setFetchedProcedureList(data.procedureList);
@@ -81,7 +81,7 @@ function ManageProceduresScreen ({route}) {
                                         data={fetchedProcedureList}
                                         renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} isOwner={isOwner} email={email}
                                         focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
-                                        keyExtractor={item => item.pDescription}
+                                        keyExtractor={keyExtractor}
                                         showsVerticalScrollIndicator={false}
                                     />}  
                 </View>
