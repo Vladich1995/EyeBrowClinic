@@ -5,6 +5,7 @@ import AddButton from "../../buttons/AddButton";
 import AddProcedureForm from "../../components/AddProcedureForm";
 import ProcedureItem from "../../components/ProcedureItem";
 import ViewInfo from "../../components/ViewInfo";
+import OrderProcedureForm from "../../components/OrderProcedureForm";
 
 function ManageProceduresScreen ({route}) {
     const [addProcedure,setAddProcedure] = useState(false);
@@ -18,13 +19,15 @@ function ManageProceduresScreen ({route}) {
     const [isLoading, setIsLoading] = useState(true);
     const [email, setEmail] = useState(route.params["email"]);
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
+    const [procedureForOrder, setProcedureForOrder] = useState(null);
+    const [isOrdering, setIsOrdering] = useState(false);
 
     const keyExtractor = (item, index) => item.id;
 
     useEffect(()=>{
         async function displayProcedures () {
             try{
-                const response = await fetch("http://192.168.1.12:3000/procedure/getList").then((response) => {
+                const response = await fetch("http://192.168.137.154:3000/procedure/getList").then((response) => {
                     return response.json();
                 }).then((data) => {
                     setFetchedProcedureList(data.procedureList);
@@ -50,6 +53,12 @@ function ManageProceduresScreen ({route}) {
         }
     }, [viewProcedure]);
 
+    useEffect(()=>{
+        if(procedureForOrder != null){
+            setIsOrdering(true);
+        }
+    },[procedureForOrder]);
+
     function handleFocusChange (name) {
         setFocusedItem(name);
     }
@@ -64,6 +73,10 @@ function ManageProceduresScreen ({route}) {
         setNeedPlus(true);
     }
 
+    function orderProcedureHandler (procedure) {
+        setProcedureForOrder(procedure);
+    }
+
     if(isLoading){
         return(
             <View style={styles.loadingContainer}>
@@ -75,11 +88,12 @@ function ManageProceduresScreen ({route}) {
         return (
             <SafeAreaView style={styles.page} >
                 <View style={styles.container} >
+                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} />}
                     {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} />}
                     {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} /> : null}
                     {isRendered && <FlatList
                                         data={fetchedProcedureList}
-                                        renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} isOwner={isOwner} email={email}
+                                        renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} onOrder={orderProcedureHandler} isOwner={isOwner} email={email}
                                         focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
                                         keyExtractor={keyExtractor}
                                         showsVerticalScrollIndicator={false}

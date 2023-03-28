@@ -1,3 +1,4 @@
+import { createDrawerNavigator, DrawerContentScrollView, DrawerItemList, DrawerItem } from '@react-navigation/drawer';
 import {NavigationContainer} from "@react-navigation/native";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import {View, Text, StyleSheet, ActivityIndicator} from "react-native";
@@ -9,17 +10,17 @@ import { useState, useEffect } from "react";
 
 
 const Tab = createMaterialTopTabNavigator();
-
+const Drawer = createDrawerNavigator();
 
 function HomeScreen ({route}) {
     const [isOwner, setIsOwner] = useState(route.params.isOwner);
     return (
-        <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} initialRouteName="procedures" >
-            <Tab.Screen name="schedule" component={CalendarScreen} options={{ title: 'Schedule' }} />
-            <Tab.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} />
-            <Tab.Screen name="about" component={ClinicInfoScreen} options={{ title: 'About' }} initialParams={{email: route.params.email, isOwner: isOwner}} />
-            <Tab.Screen name="procedures" component={ManageProceduresScreen} options={{ title: 'Procedures' }} initialParams={{email: route.params.email, isOwner: isOwner}} />
-        </Tab.Navigator> 
+        <Drawer.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, drawerActiveBackgroundColor: 'pink', headerTitleAlign: 'center',  }} initialRouteName="procedures">
+            <Drawer.Screen name="procedures" component={ManageProceduresScreen} options={{ title: 'Procedures' }} initialParams={{email: route.params.email, isOwner: isOwner}} />
+            <Drawer.Screen name="schedule" component={CalendarScreen} options={{ title: 'Schedule' }} initialParams={{isOwner: isOwner}} />
+            <Drawer.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} />
+            <Drawer.Screen name="about" component={ClinicInfoScreen} options={{ title: 'About' }} initialParams={{email: route.params.email, isOwner: isOwner}} />
+        </Drawer.Navigator> 
     );
     
 }

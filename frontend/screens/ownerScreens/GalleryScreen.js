@@ -22,7 +22,7 @@ function GalleryScreen ({route}) {
     useEffect(()=>{
         async function getGallery () {
             try{
-                const response = await fetch((type == "certificates") ? "http://192.168.1.12:3000/certificate/get" : "http://192.168.1.12:3000/portfolio/getportfolio").then((response) => {
+                const response = await fetch((type == "certificates") ? "http://192.168.137.154:3000/certificate/get" : "http://192.168.137.154:3000/portfolio/getportfolio").then((response) => {
                     return response.json();
                 }).then((data) => {
                     setFetchedGallery(data.images);

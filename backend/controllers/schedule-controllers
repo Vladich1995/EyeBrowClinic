@@ -1,0 +1,83 @@
+const admin = require('firebase-admin');
+const  fetch = require('node-fetch');
+const { URLSearchParams } = require('url');
+const { Storage } = require('@google-cloud/storage');
+
+const serviceAccount = require('../files/eyebrowcli-firebase-adminsdk-5w7wj-c9c4045a14');
+
+const db = admin.database();
+
+admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+    databaseURL: 'https://eyebrowcli-default-rtdb.firebaseio.com/',
+    storageBucket: 'eyebrowcli.appspot.com'
+  }, "schedule");
+
+const storage = new Storage({
+  projectId: 'eyebrowcli',
+  keyFilename: serviceAccount
+});
+
+
+const firebaseConfig = {
+    apiKey: "AIzaSyDBPrleIBJv89kakAvw5-SZcRxOwG42VEQ",
+    authDomain: "eyebrowcli.firebaseapp.com",
+    projectId: "eyebrowcli",
+    storageBucket: "eyebrowcli.appspot.com",
+    messagingSenderId: "176749062648",
+    appId: "1:176749062648:web:094c3e272ee9928b660e0d"
+  };
+
+  const setWorkingDays = (req, res, next) => {
+    ref = db.ref(`workingDays`);
+    try{
+        ref.remove()
+        .then(() => {
+            ref.push(req.body.schedule,(error) => {
+                if (error) {
+                  console.log('Data could not be saved:' + error);
+                  res.json({success: false, message: error})
+                } else {
+                  console.log('Data saved successfully.');
+                  res.json({success: true});
+                }
+              });
+        })
+        .catch((error) => {
+            console.error("Error removing data:", error);
+            res.json({success: false});
+        });
+    } catch (err) {
+        console.log(err);
+        res.json({success: false});
+    }
+  }
+
+  const getWorkingDays = (req, res, next) => {
+    const ref = db.ref('workingDays');
+    ref.once('value', async function(dataSnapshot) {
+        const data = dataSnapshot.val();
+        const firstKey = Object.keys(data)[0];
+        res.json({days: data[firstKey], success: true});
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
+  const updateVacation = (req, res, next) => {
+    const ref = db.ref('vacationDays');
+    ref.push(req.body.day,(error) => {
+      if (error) {
+        console.log('Vacation day could not be saved:' + error);
+        res.json({success: false, message: error})
+      } else {
+        console.log('Vacation day saved successfully.');
+        res.json({success: true});
+      }
+    });
+  }
+
+  exports.setWorkingDays = setWorkingDays;
+  exports.getWorkingDays = getWorkingDays;
+  exports.updateVacation = updateVacation;

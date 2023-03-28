@@ -23,7 +23,7 @@ function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading}) {
     async function addProcedureHandler() {
         startLoading();
         try{
-            const response = await fetch("http://192.168.1.12:3000/procedure/add",{
+            const response = await fetch("http://192.168.137.154:3000/procedure/add",{
             method: 'POST',
             headers: {
               Accept: 'application/json',

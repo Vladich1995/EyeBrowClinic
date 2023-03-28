@@ -11,7 +11,7 @@ function AddGalleryForm ({onCancel, inc, type}) {
     useEffect(()=>{
         async function update () {
             if(cImage != null){
-                const response = await fetch((type == "certificates") ? "http://192.168.1.12:3000/certificate/add" : "http://192.168.1.12:3000/portfolio/addportfolio",{
+                const response = await fetch((type == "certificates") ? "http://192.168.137.154:3000/certificate/add" : "http://192.168.137.154:3000/portfolio/addportfolio",{
                 method: 'POST',
                 headers: {
                 Accept: 'application/json',

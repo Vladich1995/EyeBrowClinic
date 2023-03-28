@@ -38,7 +38,7 @@ function GalleryItem ({galleryItem, onFocusChange, focusedName, inc, onView, sta
 
     async function removeGalleryItemHandler () {
         startLoading();
-        const response = await fetch((type == "certificates") ? "http://192.168.1.12:3000/certificate/delete" : "http://192.168.1.12:3000/portfolio/deleteportfolio",{
+        const response = await fetch((type == "certificates") ? "http://192.168.137.154:3000/certificate/delete" : "http://192.168.137.154:3000/portfolio/deleteportfolio",{
             method: 'POST',
             headers: {
               Accept: 'application/json',

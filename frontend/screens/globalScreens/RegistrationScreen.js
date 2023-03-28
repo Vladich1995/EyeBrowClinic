@@ -16,6 +16,8 @@ function RegistrationScreen ({navigation}) {
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [password2Focused, setPassword2Focused] = useState(false);
 
+    const [isOwner, setIsOwner] = useState(null);
+
     function nameFocusHandler () {
         setnameFocused(true);
     }
@@ -57,7 +59,7 @@ function RegistrationScreen ({navigation}) {
     }
 
     async function submitHandler () {
-        const response = await fetch("http://192.168.1.12:3000/register/",{
+        const response = await fetch("http://192.168.137.154:3000/register/",{
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -77,10 +79,21 @@ function RegistrationScreen ({navigation}) {
                 ])
             }
             else{
-                navigation.navigate("home");
+                if(email == "vlad.charny@gmail.com"){
+                    setIsOwner(true);
+                }
+                else{
+                    setIsOwner(false);
+                }
             }
         });
     }
+    
+    useEffect(()=>{
+        if(isOwner != null){
+            navigation.navigate("home", {isOwner: isOwner, email: userEmail});
+        }
+    }, [isOwner]);
 
 
     return (

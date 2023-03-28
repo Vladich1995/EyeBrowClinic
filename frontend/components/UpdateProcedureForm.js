@@ -28,7 +28,7 @@ function UpdateProcedureForm ({prop, cancel, procedure, inc, pageUpdate}) {
     async function updateHandler() {
         //prop-> name of the prop
         //newValue -> the new information we want to insert
-        const response = await fetch("http://192.168.1.12:3000/procedure/update",{
+        const response = await fetch("http://192.168.137.154:3000/procedure/update",{
             method: 'POST',
             headers: {
               Accept: 'application/json',
