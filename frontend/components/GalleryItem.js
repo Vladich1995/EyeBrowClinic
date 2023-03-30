@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import OptionsButton from "../buttons/OptionsButton";
 import {decode} from 'base-64';
 
-function GalleryItem ({galleryItem, onFocusChange, focusedName, inc, onView, startLoading, isOwner, type}) {
+function GalleryItem ({galleryItem, onFocusChange, focusedName, inc, onView, startLoading, isOwner, type, ip}) {
     const [isPressed, setIsPressed] = useState(false);
     const [decodedImage, setDecodedImage] = useState(null);
     const screenWidth = Dimensions.get('window').width;
@@ -38,7 +38,7 @@ function GalleryItem ({galleryItem, onFocusChange, focusedName, inc, onView, sta
 
     async function removeGalleryItemHandler () {
         startLoading();
-        const response = await fetch((type == "certificates") ? "http://192.168.137.154:3000/certificate/delete" : "http://192.168.137.154:3000/portfolio/deleteportfolio",{
+        const response = await fetch((type == "certificates") ? `http://${ip}:3000/certificate/delete` : `http://${ip}:3000/portfolio/deleteportfolio`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',

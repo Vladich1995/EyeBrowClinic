@@ -78,6 +78,25 @@ const firebaseConfig = {
     });
   }
 
+  const getVacations = (req, res, next) => {
+    const ref = db.ref('vacationDays');
+    ref.once('value', async function(dataSnapshot) {
+      const vacations = [];
+  
+      dataSnapshot.forEach(function(childSnapshot) {
+          let childData = childSnapshot.val();
+          const childKey = childSnapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          vacations.push(childData);
+      });
+      res.json({vacations: vacations, success: true});
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
   exports.setWorkingDays = setWorkingDays;
   exports.getWorkingDays = getWorkingDays;
   exports.updateVacation = updateVacation;
+  exports.getVacations = getVacations;

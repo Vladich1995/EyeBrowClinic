@@ -5,5 +5,6 @@ const router = express.Router();
 router.post("/set", scheduleControllers.setWorkingDays);
 router.get("/get", scheduleControllers.getWorkingDays);
 router.post("/updatevacation", scheduleControllers.updateVacation);
+router.get("/getvacations", scheduleControllers.getVacations);
 
 module.exports = router;

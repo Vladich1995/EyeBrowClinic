@@ -1,10 +1,12 @@
-import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, ScrollView, Text } from "react-native";
+import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput, ActivityIndicator, ScrollView, Text } from "react-native";
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import { Button, CheckBox } from 'react-native-elements';
 
-function ScheduleSettingsScreen () {
+function ScheduleSettingsScreen ({route}) {
+    const ip = route.params.ip;
+    const [isLoading, setIsLoading] = useState(true);
     const [sundayChecked, setSundayChecked] = useState(false);
     const [mondayChecked, setMondayChecked] = useState(false);
     const [tuesdayChecked, setTuesdayChecked] = useState(false);
@@ -14,12 +16,13 @@ function ScheduleSettingsScreen () {
     const [saturdayChecked, setSaturdayChecked] = useState(false);
     const [workingDays, setWorkingDays] = useState(null);
     const [markedDates, setMarkedDates] = useState(null);
+    const [vacationDays, setVacationDays] = useState(null);
     const [count, setCount] = useState(0);
 
     useEffect(()=>{
         async function getWorkingDays () {
             try{
-                const response = await fetch("http://192.168.137.154:3000/schedule/get").then((response) => {
+                const response = await fetch(`http://${ip}:3000/schedule/get`).then((response) => {
                     return response.json();
                 }).then((data) => {
                    setWorkingDays(data.days);
@@ -31,8 +34,26 @@ function ScheduleSettingsScreen () {
         getWorkingDays();
     },[count]);
 
+
     useEffect(()=>{
-        if(workingDays != null){
+        async function getVacationDays () {
+            try{
+                const response = await fetch(`http://${ip}:3000/schedule/getvacations`).then((response) => {
+                    return response.json();
+                }).then((data) => {
+                   setVacationDays(data.vacations);
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
+        getVacationDays();
+    },[workingDays]);
+
+    
+
+    useEffect(()=>{
+        if(workingDays != null && vacationDays != null){
             setSundayChecked(workingDays.sunday);
             setMondayChecked(workingDays.monday);
             setTuesdayChecked(workingDays.tuesday);
@@ -40,7 +61,6 @@ function ScheduleSettingsScreen () {
             setThursdayChecked(workingDays.thursday);
             setFridayChecked(workingDays.friday);
             setSaturdayChecked(workingDays.saturday);
-
             const workingDates = {};
             // Get the date of the next Sunday
             const nextSunday = new Date();
@@ -85,54 +105,91 @@ function ScheduleSettingsScreen () {
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 0);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 if(workingDays.monday) { 
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 1);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 if(workingDays.tuesday) { 
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 2);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 if(workingDays.wednesday) { 
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 3);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 if(workingDays.thursday) { 
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 4);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 if(workingDays.friday) { 
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 5);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 if(workingDays.saturday) { 
                     const currentDate = new Date(nextSunday.getTime());
                     currentDate.setDate(currentDate.getDate() + 6);
                     const dateString = currentDate.toISOString().split('T')[0];
-                    workingDates[dateString] = { marked: true };
+                    if(vacationDays.includes(dateString)){
+                        workingDates[dateString] = { marked: true, dotColor: "red" };
+                    }
+                    else{
+                        workingDates[dateString] = { marked: true };
+                    }
                 }
                 setMarkedDates(workingDates);
                 nextSunday.setDate(nextSunday.getDate() + 7);
             }
         }
-    }, [workingDays]);
+        setIsLoading(false);
+    }, [vacationDays]);
 
     
     
     async function daySelectHandler (day) {
-        const response = await fetch("http://192.168.137.154:3000/schedule/updatevacation",{
+        if(!vacationDays.includes(day.dateString)){
+            const response = await fetch(`http://${ip}:3000/schedule/updatevacation`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -143,14 +200,19 @@ function ScheduleSettingsScreen () {
             }),
           }).then((response) => {
             return response.json();
-        }).then((data) => {
-            setCount(count+1);
-        });
-        markedDates[day.dateString] = { marked: true, dotColor: "red" };
+            }).then((data) => {
+                
+                setCount(count+1);
+            });
+        }
+        else{
+
+        }
     }
 
 
     async function saveSelectionHandler () {
+        setIsLoading(true);
         const days = {
             sunday: sundayChecked,
             monday: mondayChecked,
@@ -160,7 +222,7 @@ function ScheduleSettingsScreen () {
             friday: fridayChecked,
             saturday: saturdayChecked
         };
-        const response = await fetch("http://192.168.137.154:3000/schedule/set",{
+        const response = await fetch(`http://${ip}:3000/schedule/set`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -180,7 +242,7 @@ function ScheduleSettingsScreen () {
         <ScrollView style={styles.container}>
             <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
             <View style={styles.calendarContainer}>
-                <Calendar onDayLongPress={daySelectHandler} markedDates={markedDates} />
+                {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : <Calendar onDayLongPress={daySelectHandler} markedDates={markedDates} /> }
             </View>
             <View style={styles.selection}>
                 <Text style={styles.selectTitle}>Select working days:</Text>

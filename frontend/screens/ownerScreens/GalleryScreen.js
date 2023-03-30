@@ -6,6 +6,7 @@ import AddGalleryForm from "../../components/AddGalleryForm";
 import GalleryItem from "../../components/GalleryItem";
 
 function GalleryScreen ({route}) {
+    const ip = route.params.ip;
     const [isLoading, setIsLoading] = useState(false);
     const [isRendered, setIsRendered] = useState(false);
     const [needPlus, setNeedPlus] = useState(true);
@@ -22,7 +23,7 @@ function GalleryScreen ({route}) {
     useEffect(()=>{
         async function getGallery () {
             try{
-                const response = await fetch((type == "certificates") ? "http://192.168.137.154:3000/certificate/get" : "http://192.168.137.154:3000/portfolio/getportfolio").then((response) => {
+                const response = await fetch((type == "certificates") ? `http://${ip}:3000/certificate/get` : `http://${ip}:3000/portfolio/getportfolio`).then((response) => {
                     return response.json();
                 }).then((data) => {
                     setFetchedGallery(data.images);
@@ -63,11 +64,11 @@ function GalleryScreen ({route}) {
         return(
             <SafeAreaView style={styles.page}>
                 <View style={styles.container} >
-                    {addGallery && <AddGalleryForm onCancel={cancelAddHandler} inc={()=>setCount(count+1)} type={type} />}
+                    {addGallery && <AddGalleryForm onCancel={cancelAddHandler} inc={()=>setCount(count+1)} type={type} ip={ip} />}
                     {isRendered && <FlatList
                                         data={fetchedGallery}
                                         renderItem={({item}) => <GalleryItem galleryItem={item} onFocusChange={handleFocusChange} isOwner={isOwner} type={type}
-                                        focusedName={focusedItem} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
+                                        focusedName={focusedItem} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip}  />}
                                         keyExtractor={keyExtractor}
                                         showsVerticalScrollIndicator={false} 
                                         horizontal={(type=="portfolio") && true}

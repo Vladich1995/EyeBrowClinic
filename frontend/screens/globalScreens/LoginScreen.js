@@ -5,7 +5,8 @@ import LoginButton from "../../buttons/LoginButton";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 
-function LoginScreen ({navigation}) {
+function LoginScreen ({route, navigation}) {
+    const ip = route.params.ip;
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [emailFocused, setEmailFocused] = useState(false);
@@ -78,7 +79,7 @@ function LoginScreen ({navigation}) {
     }
 
     async function loginHandler () {
-        const response = await fetch("http://192.168.137.154:3000/login/new",{
+        const response = await fetch(`http://${ip}:3000/login/new`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',

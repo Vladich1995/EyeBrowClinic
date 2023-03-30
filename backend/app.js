@@ -14,8 +14,7 @@ app.use("/procedure", procedureRoutes);
 app.use("/certificate", aboutRoutes);
 app.use("/portfolio", aboutRoutes);
 app.use("/schedule", scheduleRoutes);
-app.use("/schedule", scheduleRoutes);
-app.use("/schedule", scheduleRoutes);
+
 
 
 app.listen(3000, function () {

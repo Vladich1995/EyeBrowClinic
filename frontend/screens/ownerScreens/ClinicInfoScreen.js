@@ -9,11 +9,12 @@ const Tab = createMaterialTopTabNavigator();
 
 
 function ClinicInfoScreen ({route}) {
+    const ip = route.params.ip;
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
     return (
          <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} >
-             <Tab.Screen name="portfolio" component={GalleryScreen} options={{ title: 'Portfolio' }} initialParams={{ isOwner: isOwner, type: "portfolio"}} />
-             <Tab.Screen name="certificates" component={GalleryScreen} options={{ title: 'Certificates' }} initialParams={{ isOwner: isOwner, type: "certificates"}} />
+             <Tab.Screen name="portfolio" component={GalleryScreen} options={{ title: 'Portfolio' }} initialParams={{ isOwner: isOwner, type: "portfolio", ip: ip}} />
+             <Tab.Screen name="certificates" component={GalleryScreen} options={{ title: 'Certificates' }} initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
         </Tab.Navigator> 
     );
 }

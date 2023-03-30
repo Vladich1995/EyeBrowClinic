@@ -1,9 +1,10 @@
 import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import LoginButton from "../../buttons/LoginButton";
 
-function RegistrationScreen ({navigation}) {
+function RegistrationScreen ({route, navigation}) {
+    const ip = route.params.ip;
     const [name, setName] = useState("");
     const [email, setEmail] = useState("");
     const [email2, setEmail2] = useState("");
@@ -59,7 +60,7 @@ function RegistrationScreen ({navigation}) {
     }
 
     async function submitHandler () {
-        const response = await fetch("http://192.168.137.154:3000/register/",{
+        const response = await fetch(`http://${ip}:3000/register/`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',
@@ -91,7 +92,7 @@ function RegistrationScreen ({navigation}) {
     
     useEffect(()=>{
         if(isOwner != null){
-            navigation.navigate("home", {isOwner: isOwner, email: userEmail});
+            navigation.navigate("home", {isOwner: isOwner, email: email});
         }
     }, [isOwner]);
 

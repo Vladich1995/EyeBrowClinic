@@ -8,6 +8,7 @@ import ViewInfo from "../../components/ViewInfo";
 import OrderProcedureForm from "../../components/OrderProcedureForm";
 
 function ManageProceduresScreen ({route}) {
+    const ip = route.params.ip;
     const [addProcedure,setAddProcedure] = useState(false);
     const [fetchedProcedureList, setFetchedProcedureList] = useState(null);
     const [count, setCount] = useState(0);
@@ -27,7 +28,7 @@ function ManageProceduresScreen ({route}) {
     useEffect(()=>{
         async function displayProcedures () {
             try{
-                const response = await fetch("http://192.168.137.154:3000/procedure/getList").then((response) => {
+                const response = await fetch(`http://${ip}:3000/procedure/getList`).then((response) => {
                     return response.json();
                 }).then((data) => {
                     setFetchedProcedureList(data.procedureList);
@@ -77,6 +78,11 @@ function ManageProceduresScreen ({route}) {
         setProcedureForOrder(procedure);
     }
 
+    function cancelOrderHandler () {
+        setIsOrdering(false);
+        setProcedureForOrder(null);
+    }
+
     if(isLoading){
         return(
             <View style={styles.loadingContainer}>
@@ -88,13 +94,13 @@ function ManageProceduresScreen ({route}) {
         return (
             <SafeAreaView style={styles.page} >
                 <View style={styles.container} >
-                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} />}
-                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} />}
-                    {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} /> : null}
+                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} ip={ip} onCancel={cancelOrderHandler} />}
+                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} ip={ip} />}
+                    {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip} /> : null}
                     {isRendered && <FlatList
                                         data={fetchedProcedureList}
                                         renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} onOrder={orderProcedureHandler} isOwner={isOwner} email={email}
-                                        focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  />}
+                                        focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip}  />}
                                         keyExtractor={keyExtractor}
                                         showsVerticalScrollIndicator={false}
                                     />}  

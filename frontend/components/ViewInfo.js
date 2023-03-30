@@ -6,7 +6,7 @@ import {encode} from 'base-64';
 import * as ImageManipulator from 'expo-image-manipulator';
 import UpdateProcedureForm from "./UpdateProcedureForm";
 
-function ViewInfo ({procedure, onClose, inc, isOwner}) { 
+function ViewInfo ({procedure, onClose, inc, isOwner, ip}) { 
     const [propToUpdate, setPropToUpdate] = useState(null);
     const [updateImage, setUpdateImage] = useState(false);
     const [name, setName] = useState(procedure.pName);
@@ -20,7 +20,7 @@ function ViewInfo ({procedure, onClose, inc, isOwner}) {
     useEffect(()=>{
         async function update () {
             if(pImage != null){
-                const response = await fetch("http://192.168.137.154:3000/procedure/update",{
+                const response = await fetch(`http://${ip}:3000/procedure/update`,{
                 method: 'POST',
                 headers: {
                 Accept: 'application/json',
@@ -96,7 +96,7 @@ function ViewInfo ({procedure, onClose, inc, isOwner}) {
             return (
                 <View style={styles.container}>
                     <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
-                        {(propToUpdate != null) && <UpdateProcedureForm prop={propToUpdate} cancel={()=>setPropToUpdate(null)} procedure={procedure} inc={()=>inc()} pageUpdate={setNewValue} /> }
+                        {(propToUpdate != null) && <UpdateProcedureForm prop={propToUpdate} cancel={()=>setPropToUpdate(null)} procedure={procedure} inc={()=>inc()} pageUpdate={setNewValue} ip={ip} /> }
                         <ScrollView style={styles.scroll} scrollEventThrottle={25}>
                             <Pressable style={styles.titleContainer} android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pName")} >
                                 <Text style={styles.title} >{name}</Text>

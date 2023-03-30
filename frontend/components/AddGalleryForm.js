@@ -5,13 +5,13 @@ import * as ImagePicker from 'expo-image-picker';
 import {encode} from 'base-64';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-function AddGalleryForm ({onCancel, inc, type}) {
+function AddGalleryForm ({onCancel, inc, type, ip}) {
     const [cImage, setCimage] = useState(null);
 
     useEffect(()=>{
         async function update () {
             if(cImage != null){
-                const response = await fetch((type == "certificates") ? "http://192.168.137.154:3000/certificate/add" : "http://192.168.137.154:3000/portfolio/addportfolio",{
+                const response = await fetch((type == "certificates") ? `http://${ip}:3000/certificate/add` : `http://${ip}:3000/portfolio/addportfolio`,{
                 method: 'POST',
                 headers: {
                 Accept: 'application/json',

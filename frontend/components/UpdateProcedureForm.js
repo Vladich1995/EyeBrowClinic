@@ -2,7 +2,7 @@ import { SafeAreaView, View, Alert, StyleSheet, Picker, Button,TextInput,Touchab
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 
-function UpdateProcedureForm ({prop, cancel, procedure, inc, pageUpdate}) {
+function UpdateProcedureForm ({prop, cancel, procedure, inc, pageUpdate, ip}) {
     const [title, setTitle] = useState("");
     const [newValue, setNewValue] = useState("");
     
@@ -28,7 +28,7 @@ function UpdateProcedureForm ({prop, cancel, procedure, inc, pageUpdate}) {
     async function updateHandler() {
         //prop-> name of the prop
         //newValue -> the new information we want to insert
-        const response = await fetch("http://192.168.137.154:3000/procedure/update",{
+        const response = await fetch(`http://${ip}:3000/procedure/update`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',

@@ -5,7 +5,7 @@ import {decode} from 'base-64';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, onView, startLoading, isOwner, email}) {
+function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, onView, startLoading, isOwner, email, ip}) {
     const [isPressed, setIsPressed] = useState(false);
     const [decodedImage, setDecodedImage] = useState(null);
 
@@ -39,7 +39,7 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, on
 
     async function removeProcedureHandler () {
         startLoading();
-        const response = await fetch("http://192.168.137.154:3000/procedure/delete",{
+        const response = await fetch(`http://${ip}:3000/procedure/delete`,{
             method: 'POST',
             headers: {
               Accept: 'application/json',

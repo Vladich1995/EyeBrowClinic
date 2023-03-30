@@ -8,12 +8,13 @@ import HomeScreen from './screens/globalScreens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
+  const ip = "192.168.98.176";
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>
-        <Stack.Screen name="login" component={LoginScreen} />
-        <Stack.Screen name="register" component={RegistrationScreen} />
-        <Stack.Screen name="home" component={HomeScreen} />
+        <Stack.Screen name="login" component={LoginScreen} initialParams={{ip: ip}} />
+        <Stack.Screen name="register" component={RegistrationScreen} initialParams={{ip: ip}} />
+        <Stack.Screen name="home" component={HomeScreen} initialParams={{ip: ip}} />
       </Stack.Navigator>
     </NavigationContainer>
   );
