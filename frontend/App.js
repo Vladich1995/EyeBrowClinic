@@ -8,7 +8,7 @@ import HomeScreen from './screens/globalScreens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
-  const ip = "192.168.98.176";
+  const ip = "192.168.137.129";
   return (
     <NavigationContainer>
       <Stack.Navigator screenOptions={{headerShown: false}}>

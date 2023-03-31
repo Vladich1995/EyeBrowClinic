@@ -1,14 +1,16 @@
-import { Text, View, Dimensions, StyleSheet, Button, ScrollView, SafeAreaView } from "react-native";
+import { Text, View, Dimensions, StyleSheet, Button, ActivityIndicator, SafeAreaView } from "react-native";
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 
-function OrderProcedureForm ({procedure, ip, onCancel}) {
+function OrderProcedureForm ({procedure, ip, onCancel, timeOptions}) {
+    const [isLoading, setIsLoading] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
     const [workingDays, setWorkingDays] = useState(null);
     const [markedDates, setMarkedDates] = useState(null);
     const [vacationDays, setVacationDays] = useState(null);
     const screenHeight = Dimensions.get('window').height;
+     
 
     useEffect(()=>{
         async function getWorkingDays () {
@@ -165,6 +167,7 @@ function OrderProcedureForm ({procedure, ip, onCancel}) {
                 setMarkedDates(workingDates);
                 nextSunday.setDate(nextSunday.getDate() + 7);
             }
+            setIsLoading(false);
         }
     }, [vacationDays]);
 
@@ -178,6 +181,7 @@ function OrderProcedureForm ({procedure, ip, onCancel}) {
     }
     
     function cancelHandler () {
+        setSelectedDay(null);
         onCancel();
     }
 
@@ -188,10 +192,10 @@ function OrderProcedureForm ({procedure, ip, onCancel}) {
             <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
                 <View style={styles.calendarContainer}>
                     <Text style={{fontSize: 20, alignSelf: "center"}}>Select date:</Text>
-                    <Calendar onDayPress={daySelectHandler} onMonthChange={monthChangeHandler} markedDates={markedDates} />
+                    {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : <Calendar onDayPress={daySelectHandler} onMonthChange={monthChangeHandler} markedDates={markedDates} />}
                 </View>
                 {(selectedDay != null) && <View style={styles.selectionContainer}>
-                    <Text style={{fontSize: 20, paddingTop: 50, alignSelf: "center"}}>Select an hour:</Text>
+                    <Text style={{fontSize: 20, alignSelf: "center"}}>Select an hour:</Text>
                     <View style={styles.select}>
                         <View style={styles.dropDown}>
 
@@ -201,7 +205,9 @@ function OrderProcedureForm ({procedure, ip, onCancel}) {
                         </View>
                     </View>
                 </View>}
-                <Button title="Cancel" onPress={cancelHandler} />
+                <View style={styles.cancelContainer}>
+                    <Button title="Cancel" onPress={cancelHandler} />
+                </View>
             </LinearGradient>
         </View>
     );
@@ -218,11 +224,11 @@ const styles = StyleSheet.create({
         alignItems: "center"
     },
     calendarContainer: {
-        height: 300,
+        height: 400,
         width: "100%",
     },
     selectionContainer: {
-        height: 300,
+        height: 200,
         width: "100%"
     },
     select: {
@@ -236,6 +242,11 @@ const styles = StyleSheet.create({
     accept: {
         flex: 1,
         backgroundColor: "blue"
+    },
+    cancelContainer: {
+        height: 40,
+        width: "100%",
+        alignItems: "center",
     }
 });
 

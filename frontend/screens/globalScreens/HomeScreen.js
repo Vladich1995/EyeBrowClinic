@@ -16,7 +16,7 @@ function HomeScreen ({route}) {
     const ip = route.params.ip;
     const [isOwner, setIsOwner] = useState(route.params.isOwner);
     return (
-        <Drawer.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, drawerActiveBackgroundColor: 'pink', headerTitleAlign: 'center',  }} initialRouteName="procedures">
+        <Drawer.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, drawerActiveBackgroundColor: 'pink', headerTitleAlign: 'center' }} initialRouteName="procedures">
             <Drawer.Screen name="procedures" component={ManageProceduresScreen} options={{ title: 'Procedures' }} initialParams={{email: route.params.email, isOwner: isOwner, ip: ip}} />
             <Drawer.Screen name="schedule" component={CalendarScreen} options={{ title: 'Schedule' }} initialParams={{isOwner: isOwner, ip: ip}} />
             <Drawer.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} />

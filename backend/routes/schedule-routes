@@ -6,5 +6,8 @@ router.post("/set", scheduleControllers.setWorkingDays);
 router.get("/get", scheduleControllers.getWorkingDays);
 router.post("/updatevacation", scheduleControllers.updateVacation);
 router.get("/getvacations", scheduleControllers.getVacations);
+router.post("/settimes", scheduleControllers.setWorkingTimes);
+router.post("/setinterval", scheduleControllers.setTimeIntervals);
+router. get("/gettimes", scheduleControllers.getTimeSettings);
 
 module.exports = router;
