@@ -2,14 +2,17 @@ import { Text, View, Dimensions, StyleSheet, Button, ActivityIndicator, SafeArea
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
+import {Picker} from "@react-native-picker/picker";
 
-function OrderProcedureForm ({procedure, ip, onCancel, timeOptions}) {
+function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
     const [isLoading, setIsLoading] = useState(true);
     const [selectedDay, setSelectedDay] = useState(null);
     const [workingDays, setWorkingDays] = useState(null);
     const [markedDates, setMarkedDates] = useState(null);
     const [vacationDays, setVacationDays] = useState(null);
+    const [procedureTime, setProcedureTime] = useState(null);
     const screenHeight = Dimensions.get('window').height;
+    const [ordersInDay, setOrdersInDay] = useState(null);
      
 
     useEffect(()=>{
@@ -48,12 +51,19 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions}) {
     useEffect(()=>{
         if(workingDays != null && vacationDays != null){
             const workingDates = {};
-            // Get the date of the next Sunday
-            const nextSunday = new Date();
-            nextSunday.setDate(nextSunday.getDate() + ((7 - nextSunday.getDay()) % 7));
-            let tempDay = new Date();
-            tempDay = new Date(tempDay.getTime());
-            while(tempDay < nextSunday){
+            //Get the date of the next Sunday
+            let today = new Date();
+            let daysUntilNextSunday = 7 - today.getDay();
+            let nextSunday = new Date(today.getFullYear(), today.getMonth(), today.getDate() + daysUntilNextSunday);
+            let timezoneOffset = nextSunday.getTimezoneOffset() * 60000;
+            nextSunday = new Date(nextSunday.getTime() - timezoneOffset);
+            
+            // const nextSunday = new Date();
+            // nextSunday.setDate(nextSunday.getDate() + ((7 - nextSunday.getDay()) % 7));
+            let toDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+            let toDayOffset = toDay.getTimezoneOffset() * 60000;
+            tempDay = new Date(toDay.getTime() - toDayOffset);
+            while(tempDay.getDay() != 0){
                     if(tempDay.getDay() == 0 && workingDays.sunday){
                         const dateString = tempDay.toISOString().split('T')[0];
                         workingDates[dateString] = { marked: true };
@@ -167,17 +177,57 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions}) {
                 setMarkedDates(workingDates);
                 nextSunday.setDate(nextSunday.getDate() + 7);
             }
-            setIsLoading(false);
         }
+        setIsLoading(false);
     }, [vacationDays]);
 
-    function daySelectHandler (day) {
-        setSelectedDay(day);
+    useEffect(()=>{
+        //update the list of timeOptions based on the orders in a specific day
+    }, [ordersInDay]);
 
+    async function daySelectHandler (day) {
+        if(Object.keys(markedDates).includes(day.dateString.toString()) && !vacationDays.includes(day.dateString.toString())){
+            setSelectedDay(day);
+            try{
+                const response = await fetch(`http://${ip}:3000/schedule/getorders/${day.dateString}`).then((response) => {
+                    return response.json();
+                }).then((data) => {
+                   setOrdersInDay(data.orders);
+                });
+            } catch (err) {
+                console.log(err);
+            }
+        }
     }
 
     function monthChangeHandler () {
 
+    }
+
+    async function completeOrderHandler () {
+        console.log(selectedDay.dateString, procedureTime, procedure.pName);
+        const response = await fetch(`http://${ip}:3000/schedule/order`,{
+            method: 'POST',
+            headers: {
+              Accept: 'application/json',
+              'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+              day: selectedDay.dateString,
+              time: procedureTime,
+              pName: procedure.pName,
+              duration: procedure.pDuration
+            }),
+          }).then((response) => {
+            return response.json();
+            }).then((data) => {
+                if(data.success){
+                    inc();
+                }
+                else{
+                    console.log(data.message);
+                }
+            });
     }
     
     function cancelHandler () {
@@ -198,11 +248,20 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions}) {
                     <Text style={{fontSize: 20, alignSelf: "center"}}>Select an hour:</Text>
                     <View style={styles.select}>
                         <View style={styles.dropDown}>
-
+                            <Picker
+                                selectedValue={procedureTime}
+                                onValueChange={setProcedureTime}
+                                style={{backgroundColor: "white"}}
+                            >
+                                {timeOptions.map((time) => (
+                                <Picker.Item key={time} label={time} value={time} />
+                                ))}
+                            </Picker>
                         </View>
-                        <View style={styles.accept}>
-
-                        </View>
+                        {(procedureTime != null) &&
+                        <View style={styles.completion}>
+                            <Button title="Complete order" onPress={completeOrderHandler} />
+                        </View>}
                     </View>
                 </View>}
                 <View style={styles.cancelContainer}>
@@ -233,15 +292,17 @@ const styles = StyleSheet.create({
     },
     select: {
         flex: 1,
-        flexDirection: "row"
     },
     dropDown: {
-        flex: 1,
-        backgroundColor: "green"
+        alignSelf: "center",
+        height: 30,
+        width: "60%"
     },
-    accept: {
-        flex: 1,
-        backgroundColor: "blue"
+    completion: {
+        height: 40,
+        width: "100%",
+        alignItems: "center",
+        marginTop: 50
     },
     cancelContainer: {
         height: 40,

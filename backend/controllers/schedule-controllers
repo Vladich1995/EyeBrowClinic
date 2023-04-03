@@ -139,20 +139,84 @@ const firebaseConfig = {
     ref.once('value', async function(dataSnapshot) {
       const data = dataSnapshot.val();
       const firstKey = Object.keys(data)[0];
-      console.log(data[firstKey]);
       timeSettings.push(data[firstKey]);
       const ref2 = db.ref('workingInterval');
       ref2.once('value', async function(dataSnapshot) {
         const data = dataSnapshot.val();
         const firstKey = Object.keys(data)[0];
-        console.log(data[firstKey]);
         timeSettings.push(data[firstKey]);
-        const ref2 = db.ref('workingInterval');
-        res.json({success: true, timeSettings: timeSettings});
+        const start = timeSettings[0]["start"];
+        const end = timeSettings[0]["end"];                
+        let interval = timeSettings[1]["interval"];
+        interval = parseInt(interval);
+        const startHour = start.slice(0,2);
+        const startMin = start.slice(3,5);
+        const endHour = end.slice(0,2);
+        const endMin = end.slice(3,5);
+        const startTime = new Date(2000, 0, 1);
+        startTime.setHours(startHour);
+        startTime.setMinutes(startMin);
+        const endTime = new Date(2000, 0, 1);
+        endTime.setHours(endHour);
+        endTime.setMinutes(endMin);
+        const timeArray = [];
+        while(startTime.getHours() <= endTime.getHours()){
+          let time;
+          if(startTime.getMinutes() == 0){
+            time = (startTime.getHours()).toString() + ":" + (startTime.getMinutes()).toString() + "0";
+          }
+          else{
+            time = (startTime.getHours()).toString() + ":" + (startTime.getMinutes()).toString();
+          }
+          if(startTime.getHours() < endTime.getHours()){
+            timeArray.push(time);
+          }
+          if(startTime.getHours() == endTime.getHours()){
+            if(startTime.getMinutes() <= endTime.getMinutes()){
+              timeArray.push(time);
+            }
+          }
+          startTime.setMinutes(startTime.getMinutes() + interval);
+          }
+          res.json({success: true, timeOptions: timeArray});
       }, function(error) {
         console.error(error);
         res.json({success: false});
       });
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
+  
+
+  const completeOrder = (req, res, next) => {
+    const ref = db.ref('Orders');
+    ref.push(req.body,(error) => {
+      if (error) {
+        console.log('New order could not be saved:' + error);
+        res.json({success: false, message: error})
+      } else {
+        console.log('New order saved successfully.');
+        res.json({success: true});
+      }
+    });
+  }
+
+  const getOrdersByDay = (req, res, next) => {
+    const ref = db.ref('Orders');
+    ref.once('value', async function(dataSnapshot) {
+      const orders = [];
+      dataSnapshot.forEach(function(childSnapshot) {
+          let childData = childSnapshot.val();
+          const childKey = childSnapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          if(childData.day == req.params.day){
+            orders.push(childData);
+          }
+      });
+      res.json({orders: orders, success: true});
     }, function(error) {
       console.error(error);
       res.json({success: false});
@@ -166,3 +230,5 @@ const firebaseConfig = {
   exports.setWorkingTimes = setWorkingTimes;
   exports.setTimeIntervals = setTimeIntervals;
   exports.getTimeSettings = getTimeSettings;
+  exports.completeOrder = completeOrder;
+  exports.getOrdersByDay = getOrdersByDay;

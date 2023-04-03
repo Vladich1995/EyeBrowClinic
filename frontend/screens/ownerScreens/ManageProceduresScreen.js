@@ -12,6 +12,7 @@ function ManageProceduresScreen ({route}) {
     const [addProcedure,setAddProcedure] = useState(false);
     const [fetchedProcedureList, setFetchedProcedureList] = useState(null);
     const [count, setCount] = useState(0);
+    const [countTimes, setCountTimes] = useState(0);
     const [isRendered, setIsRendered] = useState(false);
     const [focusedItem, setFocusedItem] = useState(null);
     const [needView, setNeedView] = useState(false);
@@ -28,51 +29,20 @@ function ManageProceduresScreen ({route}) {
 
     useEffect(()=>{
         async function getTimeSettings () {
-            try{
-                const response = await fetch(`http://${ip}:3000/schedule/gettimes`).then((response) => {
-                    return response.json();
-                }).then((data) => {
-                    const start = data.timeSettings[0]["start"];
-                    const end = data.timeSettings[0]["end"];
-                    let interval = data.timeSettings[1]["interval"];
-                    interval = parseInt(interval);
-                    const startHour = start.slice(0,2);
-                    const startMin = start.slice(3,5);
-                    const endHour = end.slice(0,2);
-                    const endMin = end.slice(3,5);
-                    const startTime = new Date(2000, 0, 1);
-                    startTime.setHours(startHour);
-                    startTime.setMinutes(startMin);
-                    const endTime = new Date(2000, 0, 1);
-                    endTime.setHours(endHour);
-                    endTime.setMinutes(endMin);
-                    const timeArray = [];
-                    while(startTime.getHours() <= endTime.getHours()){
-                        let time;
-                        if(startTime.getMinutes() == 0){
-                            time = (startTime.getHours()).toString() + ":" + (startTime.getMinutes()).toString() + "0";
-                        }
-                        else{
-                            time = (startTime.getHours()).toString() + ":" + (startTime.getMinutes()).toString();
-                        }
-                        if(startTime.getHours() < endTime.getHours()){
-                            timeArray.push(time);
-                        }
-                        if(startTime.getHours() == endTime.getHours()){
-                            if(startTime.getMinutes() <= endTime.getMinutes()){
-                                timeArray.push(time);
-                            }
-                        }
-                        startTime.setMinutes(startTime.getMinutes() + interval);
-                    }
-                    setTimeOptions(timeArray);
-                });
-            } catch (err) {
-                console.log(err);
+            if(!isOwner){
+                try{
+                    const response = await fetch(`http://${ip}:3000/schedule/gettimes`).then((response) => {
+                        return response.json();
+                    }).then((data) => {
+                        setTimeOptions(data.timeOptions);
+                    });
+                } catch (err) {
+                    console.log(err);
+                }
             }
         }
         getTimeSettings();
-    },[]);
+    },[countTimes]);
 
     useEffect(()=>{
         async function displayProcedures () {
@@ -94,7 +64,7 @@ function ManageProceduresScreen ({route}) {
             setIsRendered(true);
             setIsLoading(false);
         }
-    }, [fetchedProcedureList]);
+    }, [fetchedProcedureList, timeOptions]);
 
     useEffect(()=>{
         if(viewProcedure != null){
@@ -143,7 +113,7 @@ function ManageProceduresScreen ({route}) {
         return (
             <SafeAreaView style={styles.page} >
                 <View style={styles.container} >
-                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} ip={ip} onCancel={cancelOrderHandler} timeOptions={timeOptions} />}
+                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} ip={ip} onCancel={cancelOrderHandler} timeOptions={timeOptions} inc={()=>setCountTimes(countTimes+1)} />}
                     {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} ip={ip} />}
                     {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip} /> : null}
                     {isRendered && <FlatList

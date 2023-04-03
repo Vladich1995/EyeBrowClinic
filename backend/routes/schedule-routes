@@ -9,5 +9,7 @@ router.get("/getvacations", scheduleControllers.getVacations);
 router.post("/settimes", scheduleControllers.setWorkingTimes);
 router.post("/setinterval", scheduleControllers.setTimeIntervals);
 router. get("/gettimes", scheduleControllers.getTimeSettings);
+router.post("/order", scheduleControllers.completeOrder);
+router.get("/getorders/:day", scheduleControllers.getOrdersByDay);
 
 module.exports = router;
