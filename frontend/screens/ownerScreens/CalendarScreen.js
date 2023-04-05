@@ -11,12 +11,17 @@ const Tab = createMaterialTopTabNavigator();
 function CalendarScreen ({route}) {
     const ip = route.params.ip;
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
-    return (
-         <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} >
-             <Tab.Screen name="settings" component={ScheduleSettingsScreen} options={{ title: 'Settings' }} initialParams={{ ip: ip}} />
-             <Tab.Screen name="meetings" component={MeetingsScreen} options={{ title: 'Meetings' }} initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
-        </Tab.Navigator> 
-    );
+    if(isOwner){
+        return (
+            <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} >
+                <Tab.Screen name="settings" component={ScheduleSettingsScreen} options={{ title: 'Settings' }} initialParams={{ ip: ip}} />
+                <Tab.Screen name="meetings" component={MeetingsScreen} options={{ title: 'Meetings' }} initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
+           </Tab.Navigator>
+       );
+    }
+    else{
+        return (<MeetingsScreen />);
+    }
 }
 
 const styles = StyleSheet.create({

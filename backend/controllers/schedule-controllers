@@ -160,6 +160,7 @@ const firebaseConfig = {
         endTime.setHours(endHour);
         endTime.setMinutes(endMin);
         const timeArray = [];
+        timeArray.push("Select an hour");
         while(startTime.getHours() <= endTime.getHours()){
           let time;
           if(startTime.getMinutes() == 0){
@@ -167,6 +168,9 @@ const firebaseConfig = {
           }
           else{
             time = (startTime.getHours()).toString() + ":" + (startTime.getMinutes()).toString();
+          }
+          if(startTime.getHours() < 10 && startTime.getHours() >= 0){
+            time = "0" + time;
           }
           if(startTime.getHours() < endTime.getHours()){
             timeArray.push(time);

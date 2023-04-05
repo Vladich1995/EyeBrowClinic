@@ -6,6 +6,7 @@ import {Picker} from "@react-native-picker/picker";
 
 function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
     const [isLoading, setIsLoading] = useState(true);
+    const [isLoadingTimes, setIsLoadingTimes] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
     const [workingDays, setWorkingDays] = useState(null);
     const [markedDates, setMarkedDates] = useState(null);
@@ -13,6 +14,11 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
     const [procedureTime, setProcedureTime] = useState(null);
     const screenHeight = Dimensions.get('window').height;
     const [ordersInDay, setOrdersInDay] = useState(null);
+    const [updatedTimeOptions, setUpdatedTimeOptions] = useState(timeOptions);
+
+    useEffect(()=>{
+        setUpdatedTimeOptions([...timeOptions]);
+    },[selectedDay])
      
 
     useEffect(()=>{
@@ -181,11 +187,34 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
         setIsLoading(false);
     }, [vacationDays]);
 
+
     useEffect(()=>{
         //update the list of timeOptions based on the orders in a specific day
+        if(ordersInDay != null){
+            let updatedOptions = [...timeOptions];
+            for(let i = 0; i < ordersInDay.length; i++){
+                const orderTime = ordersInDay[i]["time"];
+                const start = new Date(2000, 0, 1);
+                start.setHours(orderTime.slice(0,2));
+                start.setMinutes(orderTime.slice(3,5));
+                const startTime = new Date(start);
+                start.setMinutes(start.getMinutes() + parseInt(ordersInDay[i]["duration"]));
+                const endTime = new Date (start);
+                updatedOptions = updatedOptions.filter(option => {
+                    const optionTime = new Date(2000, 0, 1);
+                    optionTime.setHours((option).slice(0, 2));
+                    optionTime.setMinutes((option).slice(3, 5));
+                    return !(optionTime >= startTime && optionTime < endTime);
+                });
+            }
+            setUpdatedTimeOptions(updatedOptions);
+            setIsLoadingTimes(false);
+        }
+        
     }, [ordersInDay]);
 
     async function daySelectHandler (day) {
+        setIsLoadingTimes(true);
         if(Object.keys(markedDates).includes(day.dateString.toString()) && !vacationDays.includes(day.dateString.toString())){
             setSelectedDay(day);
             try{
@@ -205,7 +234,6 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
     }
 
     async function completeOrderHandler () {
-        console.log(selectedDay.dateString, procedureTime, procedure.pName);
         const response = await fetch(`http://${ip}:3000/schedule/order`,{
             method: 'POST',
             headers: {
@@ -223,6 +251,7 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
             }).then((data) => {
                 if(data.success){
                     inc();
+                    onCancel();
                 }
                 else{
                     console.log(data.message);
@@ -245,20 +274,19 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
                     {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : <Calendar onDayPress={daySelectHandler} onMonthChange={monthChangeHandler} markedDates={markedDates} />}
                 </View>
                 {(selectedDay != null) && <View style={styles.selectionContainer}>
-                    <Text style={{fontSize: 20, alignSelf: "center"}}>Select an hour:</Text>
                     <View style={styles.select}>
-                        <View style={styles.dropDown}>
+                       {isLoadingTimes ? <ActivityIndicator size="large" color="#0000ff" /> : <View style={styles.dropDown}>
                             <Picker
                                 selectedValue={procedureTime}
                                 onValueChange={setProcedureTime}
                                 style={{backgroundColor: "white"}}
                             >
-                                {timeOptions.map((time) => (
+                                {updatedTimeOptions.map((time) => (
                                 <Picker.Item key={time} label={time} value={time} />
                                 ))}
                             </Picker>
-                        </View>
-                        {(procedureTime != null) &&
+                        </View>}
+                        {(procedureTime != null && procedureTime != "Select an hour") &&
                         <View style={styles.completion}>
                             <Button title="Complete order" onPress={completeOrderHandler} />
                         </View>}
