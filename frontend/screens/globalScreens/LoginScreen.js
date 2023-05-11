@@ -27,7 +27,7 @@ function LoginScreen ({route, navigation}) {
               console.error(e);
             }
           };
-           removeToken();
+           //removeToken();
 
         const getToken = async () => {
             try {
@@ -43,6 +43,7 @@ function LoginScreen ({route, navigation}) {
               const token = await getToken();
               if (token) {
                 const decodedToken = jwtDecode(token);
+                setUserToken(decodedToken);
                 if(decodedToken.email == "vlad.charny@gmail.com"){
                     setIsOwner(true);
                 }

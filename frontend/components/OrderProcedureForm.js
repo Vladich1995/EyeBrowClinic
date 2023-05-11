@@ -234,6 +234,7 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc, token})
     }
 
     async function completeOrderHandler () {
+        console.log(token)
         const response = await fetch(`http://${ip}:3000/schedule/order`,{
             method: 'POST',
             headers: {

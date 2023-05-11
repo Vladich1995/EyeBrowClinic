@@ -13,16 +13,20 @@ function CalendarScreen ({route}) {
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
     if(isOwner){
         return (
-            <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} >
+            <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}}  >
                 <Tab.Screen name="settings" component={ScheduleSettingsScreen} options={{ title: 'Settings' }} initialParams={{ ip: ip}} />
                 <Tab.Screen name="meetings" component={MeetingsScreen} options={{ title: 'Meetings' }} initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
            </Tab.Navigator>
        );
     }
     else{
-        <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} >
-            <Tab.Screen name="meetings" component={MeetingsScreen} options={{ title: 'Meetings' }} initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
-        </Tab.Navigator>
+        return(
+            // <Tab.Navigator  >
+            //     <Tab.Screen name="meetings" component={MeetingsScreen}  initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
+            // </Tab.Navigator>
+            <MeetingsScreen isOwner2={isOwner} ip2={ip} />
+        );
+
     }
 }
 

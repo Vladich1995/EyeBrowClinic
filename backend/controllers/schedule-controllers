@@ -230,19 +230,22 @@ const firebaseConfig = {
   const getAllOrders = (req, res, next) => {
     const ref = db.ref('Orders');
     ref.once('value', async function(dataSnapshot) {
+      const currentDate = new Date();
       const orders = [];
       let ordersInDay = {};
       dataSnapshot.forEach(function(childSnapshot) {
           let childData = childSnapshot.val();
           const childKey = childSnapshot.key;
           const firstKey = Object.keys(childData)[0];
-          orders.push(childData);
-          if(Object.keys(ordersInDay).includes(childData["day"])){
-            console.log("yes");
-            ordersInDay[childData["day"]] = ordersInDay[childData["day"]] + 1;
-          }
-          else{
-            ordersInDay[childData["day"]] = 1;
+          let givenDate = new Date(childData["day"]);
+          if(currentDate <= givenDate){
+            orders.push(childData);
+            if(Object.keys(ordersInDay).includes(childData["day"])){
+              ordersInDay[childData["day"]] = ordersInDay[childData["day"]] + 1;
+            }
+            else{
+              ordersInDay[childData["day"]] = 1;
+            }
           }
       });
 

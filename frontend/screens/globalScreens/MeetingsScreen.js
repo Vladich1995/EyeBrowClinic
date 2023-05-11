@@ -1,17 +1,26 @@
-import { SafeAreaView, View, StyleSheet, FlatList } from "react-native";
-import { useDeferredValue, useEffect, useState } from "react";
+import { SafeAreaView, View, StyleSheet, FlatList, PanResponder, Animated, } from "react-native";
+import {useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import {Calendar} from 'react-native-calendars';
 import colors from '../../Utility/colors'
 import OrderItem from "../../components/OrderItem";
 
-function MeetingsScreen ({route}) {
-    const ip = route.params.ip;
+function MeetingsScreen ({route, isOwner2, ip2}) {
+    const [isOwner, setIsOwner] = useState(null);
+    const [ip, setIp] = useState(null);
     const [allOrders, setAllOrders] = useState(null);
     const [markedDates, setMarkedDates] = useState({});
     const [ordersInSelectedDay, setOrdersInSelectedDay] = useState(null);
     const timeZoneOffsetInSeconds = new Date().getTimezoneOffset() * 60;
-    
+    useEffect(()=>{
+        if(route){
+            setIp(route.params.ip);
+            setIsOwner(route.params.isOwner);
+        }else{
+            setIp(ip2);
+            setIsOwner(isOwner2);
+        }
+    }, [])
       // 1-3,4-6,7-9,10+
       useEffect(()=>{
         async function getAllOrders () {
@@ -41,8 +50,10 @@ function MeetingsScreen ({route}) {
                 console.log(err);
             }
         }
-        getAllOrders();
-      }, []);
+        if(ip != null){
+            getAllOrders();
+        }
+      }, [isOwner, ip]);
 
     
       const getDaysInMonth = (month, year) => {
@@ -60,20 +71,22 @@ function MeetingsScreen ({route}) {
         setOrdersInSelectedDay(orders);
     }
 
-    return (
-        <SafeAreaView style={styles.page}>
-            <View style={styles.calendarContainer}>
-                <Calendar onDayPress={daySelectHandler} markedDates={markedDates} markingType={'custom'}  timeZoneOffsetInSeconds={timeZoneOffsetInSeconds} />
-            </View>
-            <View style={styles.ordersContainer}>
-                <FlatList
-                    data={ordersInSelectedDay}
-                    renderItem={({item}) => <OrderItem order={item} />}
-                    
-                />
-            </View>
-        </SafeAreaView>
-    );
+    if (isOwner == true) {
+        return (
+            <SafeAreaView style={styles.page}>
+                <View style={styles.calendarContainer}>
+                    <Calendar onDayPress={daySelectHandler} markedDates={markedDates} markingType={'custom'}  timeZoneOffsetInSeconds={timeZoneOffsetInSeconds} />
+                </View>      
+                <View style={styles.ordersContainer}>
+                    <FlatList
+                        data={ordersInSelectedDay}
+                        renderItem={({item}) => <OrderItem order={item} />}
+                        
+                    />
+                </View>
+            </SafeAreaView>
+        );
+    }
 }
 
 const styles = StyleSheet.create({
@@ -82,7 +95,7 @@ const styles = StyleSheet.create({
     },
     calendarContainer: {
         width: "100%",
-        paddingTop: 20
+        paddingTop: 20,
     },
     ordersContainer: {
         flex: 1
