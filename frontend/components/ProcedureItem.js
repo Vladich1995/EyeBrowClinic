@@ -5,7 +5,7 @@ import {decode} from 'base-64';
 import { Buffer } from 'buffer';
 import * as ImageManipulator from 'expo-image-manipulator';
 
-function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, onView, startLoading, isOwner, email, ip}) {
+function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, onView, startLoading, isOwner, token, ip}) {
     const [isPressed, setIsPressed] = useState(false);
     const [decodedImage, setDecodedImage] = useState(null);
 

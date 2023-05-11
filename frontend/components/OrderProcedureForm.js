@@ -4,7 +4,7 @@ import { LinearGradient } from "expo-linear-gradient";
 import {Calendar, CalendarList, Agenda} from 'react-native-calendars';
 import {Picker} from "@react-native-picker/picker";
 
-function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
+function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc, token}) {
     const [isLoading, setIsLoading] = useState(true);
     const [isLoadingTimes, setIsLoadingTimes] = useState(false);
     const [selectedDay, setSelectedDay] = useState(null);
@@ -244,7 +244,10 @@ function OrderProcedureForm ({procedure, ip, onCancel, timeOptions, inc}) {
               day: selectedDay.dateString,
               time: procedureTime,
               pName: procedure.pName,
-              duration: procedure.pDuration
+              duration: procedure.pDuration,
+              name: token.name,
+              phoneNumber: token.phone_number,
+              email: token.email
             }),
           }).then((response) => {
             return response.json();

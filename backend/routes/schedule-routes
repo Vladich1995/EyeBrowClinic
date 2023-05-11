@@ -11,5 +11,6 @@ router.post("/setinterval", scheduleControllers.setTimeIntervals);
 router. get("/gettimes", scheduleControllers.getTimeSettings);
 router.post("/order", scheduleControllers.completeOrder);
 router.get("/getorders/:day", scheduleControllers.getOrdersByDay);
+router.get("/getallorders", scheduleControllers.getAllOrders);
 
 module.exports = router;

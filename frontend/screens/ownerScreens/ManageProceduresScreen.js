@@ -19,8 +19,8 @@ function ManageProceduresScreen ({route}) {
     const [viewProcedure, setViewProcedure] = useState(null);
     const [needPlus, setNeedPlus] = useState(true);
     const [isLoading, setIsLoading] = useState(true);
-    const [email, setEmail] = useState(route.params["email"]);
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
+    const [token, setToken] = useState(route.params.token);
     const [procedureForOrder, setProcedureForOrder] = useState(null);
     const [isOrdering, setIsOrdering] = useState(false);
     const [timeOptions, setTimeOptions] = useState(null);
@@ -60,7 +60,7 @@ function ManageProceduresScreen ({route}) {
     },[count]);
 
     useEffect(()=>{
-        if(fetchedProcedureList != null && timeOptions != null){
+        if(fetchedProcedureList != null && timeOptions == isOwner ? null : !null){
             setIsRendered(true);
             setIsLoading(false);
         }
@@ -113,12 +113,12 @@ function ManageProceduresScreen ({route}) {
         return (
             <SafeAreaView style={styles.page} >
                 <View style={styles.container} >
-                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} ip={ip} onCancel={cancelOrderHandler} timeOptions={timeOptions} inc={()=>setCountTimes(countTimes+1)} />}
-                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} email={email} ip={ip} />}
+                    {isOrdering && <OrderProcedureForm procedure={procedureForOrder} ip={ip} onCancel={cancelOrderHandler} timeOptions={timeOptions} inc={()=>setCountTimes(countTimes+1)} token={token} />}
+                    {needView && <ViewInfo procedure={viewProcedure} onClose={closeViewHandler} inc={()=>setCount(count+1)} isOwner={isOwner} token={token} ip={ip} />}
                     {addProcedure  ? <AddProcedureForm cancelHandler={()=>setAddProcedure(false)} inc={()=>setCount(count+1)} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip} /> : null}
                     {isRendered && <FlatList
                                         data={fetchedProcedureList}
-                                        renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} onOrder={orderProcedureHandler} isOwner={isOwner} email={email}
+                                        renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} onOrder={orderProcedureHandler} isOwner={isOwner} token={token}
                                         focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip}  />}
                                         keyExtractor={keyExtractor}
                                         showsVerticalScrollIndicator={false}

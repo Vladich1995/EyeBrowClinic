@@ -9,7 +9,6 @@ import CalendarScreen from "../ownerScreens/CalendarScreen";
 import { useState, useEffect } from "react";
 
 
-const Tab = createMaterialTopTabNavigator();
 const Drawer = createDrawerNavigator();
 
 function HomeScreen ({route}) {
@@ -17,10 +16,10 @@ function HomeScreen ({route}) {
     const [isOwner, setIsOwner] = useState(route.params.isOwner);
     return (
         <Drawer.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, drawerActiveBackgroundColor: 'pink', headerTitleAlign: 'center' }} initialRouteName="procedures">
-            <Drawer.Screen name="procedures" component={ManageProceduresScreen} options={{ title: 'Procedures' }} initialParams={{email: route.params.email, isOwner: isOwner, ip: ip}} />
+            <Drawer.Screen name="procedures" component={ManageProceduresScreen} options={{ title: 'Procedures' }} initialParams={{token: route.params.token, isOwner: isOwner, ip: ip}} />
             <Drawer.Screen name="schedule" component={CalendarScreen} options={{ title: 'Schedule' }} initialParams={{isOwner: isOwner, ip: ip}} />
             <Drawer.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} />
-            <Drawer.Screen name="about" component={ClinicInfoScreen} options={{ title: 'About' }} initialParams={{email: route.params.email, isOwner: isOwner, ip: ip}} />
+            <Drawer.Screen name="about" component={ClinicInfoScreen} options={{ title: 'About' }} initialParams={{isOwner: isOwner, ip: ip}} />
         </Drawer.Navigator> 
     );
     

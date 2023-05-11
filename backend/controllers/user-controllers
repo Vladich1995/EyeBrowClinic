@@ -20,9 +20,10 @@ const firebaseConfig = {
   };
 
 const registerUser = (req, res, next) => {
-    const {name, email, password} = req.body;
+    const {name, phoneNumber, email, password} = req.body;
     admin.auth().createUser({
         email: email,
+        phoneNumber: phoneNumber,
         password: password,
         displayName: name,
         disabled: false
@@ -40,7 +41,7 @@ const registerUser = (req, res, next) => {
 
 const loginUser = async (req, res, next) => {
     console.log("here");
-    const {email, password} = req.body;
+    const {email, password, phoneNumber} = req.body;
     const apiKey = firebaseConfig.apiKey;
     const endpoint = `https://identitytoolkit.googleapis.com/v1/accounts:signInWithPassword?key=${apiKey}`;
 
@@ -52,6 +53,7 @@ const loginUser = async (req, res, next) => {
           },
           body: JSON.stringify({
             email,
+            phoneNumber,
             password,
             returnSecureToken: true
           })

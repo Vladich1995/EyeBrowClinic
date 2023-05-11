@@ -20,7 +20,9 @@ function CalendarScreen ({route}) {
        );
     }
     else{
-        return (<MeetingsScreen />);
+        <Tab.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, swipeEnabled: false}} >
+            <Tab.Screen name="meetings" component={MeetingsScreen} options={{ title: 'Meetings' }} initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
+        </Tab.Navigator>
     }
 }
 

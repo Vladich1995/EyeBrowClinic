@@ -1,9 +1,10 @@
 import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import LoginButton from "../../buttons/LoginButton";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
+import { useFocusEffect } from '@react-navigation/native';
 
 function LoginScreen ({route, navigation}) {
     const ip = route.params.ip;
@@ -12,11 +13,13 @@ function LoginScreen ({route, navigation}) {
     const [emailFocused, setEmailFocused] = useState(false);
     const [passwordFocused, setPasswordFocused] = useState(false);
     const [isOwner, setIsOwner] = useState(null);
-    const [userEmail, setUserEmail] = useState("");
+    const [flag, setFlag] = useState(false);
+    const [userToken, setUserToken] = useState(null);
     let token;
 
-    useEffect(()=>{
 
+
+    useEffect(()=>{
         const removeToken = async () => {
             try {
               await AsyncStorage.removeItem('jwt_token');
@@ -24,7 +27,7 @@ function LoginScreen ({route, navigation}) {
               console.error(e);
             }
           };
-           //removeToken();
+           removeToken();
 
         const getToken = async () => {
             try {
@@ -40,7 +43,6 @@ function LoginScreen ({route, navigation}) {
               const token = await getToken();
               if (token) {
                 const decodedToken = jwtDecode(token);
-                setUserEmail(decodedToken.email);
                 if(decodedToken.email == "vlad.charny@gmail.com"){
                     setIsOwner(true);
                 }
@@ -58,7 +60,7 @@ function LoginScreen ({route, navigation}) {
 
     useEffect(()=>{
         if(isOwner != null){
-            navigation.navigate("home", {isOwner: isOwner, email: userEmail});
+            navigation.navigate("home", {isOwner: isOwner, token: userToken});
         }
     }, [isOwner]);
 
@@ -103,6 +105,7 @@ function LoginScreen ({route, navigation}) {
                 setEmail("");
                 setPassword("");
                 const decodedToken = jwtDecode(token);
+                setUserToken(decodedToken);
                 if(decodedToken.email == "vlad.charny@gmail.com"){
                     setIsOwner(true);
                 }
