@@ -1,10 +1,13 @@
-import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
+import { SafeAreaView, View, Alert, StyleSheet, Dimensions, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
 import React, { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import LoginButton from "../../buttons/LoginButton";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
 import { useFocusEffect } from '@react-navigation/native';
+
+const height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
 
 function LoginScreen ({route, navigation}) {
     const ip = route.params.ip;
@@ -16,7 +19,7 @@ function LoginScreen ({route, navigation}) {
     const [flag, setFlag] = useState(false);
     const [userToken, setUserToken] = useState(null);
     let token;
-
+    
 
 
     useEffect(()=>{
@@ -27,7 +30,7 @@ function LoginScreen ({route, navigation}) {
               console.error(e);
             }
           };
-           //removeToken();
+        //removeToken();
 
         const getToken = async () => {
             try {
@@ -124,7 +127,7 @@ function LoginScreen ({route, navigation}) {
     }
 
     function guestHandler () {
-
+        
     }
 
     const storeToken = async (token) => {
@@ -141,8 +144,8 @@ function LoginScreen ({route, navigation}) {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
                         <View style={styles.loginContainer}>
-                            <TextInput style={[styles.input,{borderWidth: emailFocused ? 1 : 0}]} placeholder="Email" onFocus={emailFocusHandler} onBlur={emailBlurHandler} onChangeText={setEmail} value={email}/>
-                            <TextInput style={[styles.input,{borderWidth: passwordFocused ? 1 : 0}]} placeholder="Password" onFocus={passwordFocusHandler} onBlur={passwordBlurHandler} onChangeText={setPassword} value={password} secureTextEntry={true} />
+                            <TextInput style={[styles.input,]} placeholderTextColor={"white"} placeholder="Email" onFocus={emailFocusHandler} onBlur={emailBlurHandler} onChangeText={setEmail} value={email}/>
+                            <TextInput style={[styles.input,]} placeholderTextColor={"white"} placeholder="Password" onFocus={passwordFocusHandler} onBlur={passwordBlurHandler} onChangeText={setPassword} value={password} secureTextEntry={true} />
                             <LoginButton text="Login" onPress={loginHandler} />
                             <LoginButton text="Register" onPress={registerHandler} />
                             <LoginButton text="Continue as a guest" onPress={guestHandler} />
@@ -158,25 +161,25 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     gradient: {
-        flex: 1,
+        height: height,
         alignItems: "center",
     },
     loginContainer: {
-        height: 300,
-        width: 250,
-        borderWidth: 1,
-        borderColor: "white",
+        height: 0.5*height,
+        width: 0.8*width,
         borderRadius: 5,
         position: "absolute",
-        top: 100,
+        top: 0.2*height,
         alignItems: "center",
     },
     input: {
-        height: 40,
-        width: "80%",
-        backgroundColor: "white",
-        textAlign: "center",
-        marginTop: 20
+        height: 0.12*0.5*height,
+        width: 0.9*0.8*width,
+        borderBottomColor: "white",
+        borderBottomWidth: 1,
+        textAlign: "left",
+        marginTop: 0.05*0.5*height,
+        color: "white"
     }
 });
 

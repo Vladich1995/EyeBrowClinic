@@ -2,6 +2,7 @@ import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,To
 import { useEffect, useState } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
+import { useIsFocused } from '@react-navigation/native';
 import ScheduleSettingsScreen from "./ScheduleSettingsScreen";
 import MeetingsScreen from "../globalScreens/MeetingsScreen";
 
@@ -10,6 +11,7 @@ const Tab = createMaterialTopTabNavigator();
 
 function CalendarScreen ({route}) {
     const ip = route.params.ip;
+    const isFocused = useIsFocused();
     const [isOwner, setIsOwner] = useState(route.params["isOwner"]);
     if(isOwner){
         return (
@@ -24,7 +26,7 @@ function CalendarScreen ({route}) {
             // <Tab.Navigator  >
             //     <Tab.Screen name="meetings" component={MeetingsScreen}  initialParams={{ isOwner: isOwner, type: "certificates", ip: ip}} />
             // </Tab.Navigator>
-            <MeetingsScreen isOwner2={isOwner} ip2={ip} />
+            <MeetingsScreen isOwner2={isOwner} ip2={ip} token={route.params.token} screenIsFocused={isFocused} />
         );
 
     }

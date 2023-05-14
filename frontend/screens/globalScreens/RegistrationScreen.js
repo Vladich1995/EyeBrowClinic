@@ -1,9 +1,12 @@
-import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
+import { SafeAreaView, View, Alert, StyleSheet, Dimensions, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard } from "react-native";
 import { LinearGradient } from "expo-linear-gradient";
 import { useState, useEffect } from "react";
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import jwtDecode from 'jwt-decode';
-import LoginButton from "../../buttons/LoginButton";
+import RegisterButton from "../../buttons/RegisterButton";
+
+const height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
 
 function RegistrationScreen ({route, navigation}) {
     const ip = route.params.ip;
@@ -150,14 +153,14 @@ function RegistrationScreen ({route, navigation}) {
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
                 <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
                         <View style={styles.loginContainer}>
-                            <TextInput style={[styles.input,{borderWidth: nameFocused ? 1 : 0}]} placeholder="Name" onFocus={nameFocusHandler} onBlur={nameBlurHandler} onChangeText={setName}/>
-                            <TextInput style={[styles.input,{borderWidth: phoneNumberFocused ? 1 : 0}]} placeholder="Phone number" onFocus={phoneNumberFocusHandler} onBlur={phoneNumberBlurHandler} onChangeText={setPhoneNumber}/>
-                            <TextInput style={[styles.input,{borderWidth: emailFocused ? 1 : 0}]} placeholder="Email" onFocus={emailFocusHandler} onBlur={emailBlurHandler} onChangeText={setEmail}/>
-                            <TextInput style={[styles.input,{borderWidth: email2Focused ? 1 : 0}]} placeholder="Confirm Email" onFocus={email2FocusHandler} onBlur={email2BlurHandler} onChangeText={setEmail2}/>
-                            <TextInput style={[styles.input,{borderWidth: passwordFocused ? 1 : 0}]} placeholder="Password" onFocus={passwordFocusHandler} onBlur={passwordBlurHandler} onChangeText={setPassword} secureTextEntry={true} />
-                            <TextInput style={[styles.input,{borderWidth: password2Focused ? 1 : 0}]} placeholder="Confirm Password" onFocus={password2FocusHandler} onBlur={password2BlurHandler} onChangeText={setPassword2} secureTextEntry={true} />
-                            <LoginButton text="Submit" onPress={submitHandler} />
-                            <LoginButton text="Back" onPress={navigation.goBack} />
+                            <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Name" onFocus={nameFocusHandler} onBlur={nameBlurHandler} onChangeText={setName}/>
+                            <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Phone number" onFocus={phoneNumberFocusHandler} onBlur={phoneNumberBlurHandler} onChangeText={setPhoneNumber}/>
+                            <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Email" onFocus={emailFocusHandler} onBlur={emailBlurHandler} onChangeText={setEmail}/>
+                            <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Confirm Email" onFocus={email2FocusHandler} onBlur={email2BlurHandler} onChangeText={setEmail2}/>
+                            <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Password" onFocus={passwordFocusHandler} onBlur={passwordBlurHandler} onChangeText={setPassword} secureTextEntry={true} />
+                            <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Confirm Password" onFocus={password2FocusHandler} onBlur={password2BlurHandler} onChangeText={setPassword2} secureTextEntry={true} />
+                            <RegisterButton text="Submit" onPress={submitHandler} />
+                            <RegisterButton text="Back" onPress={navigation.goBack} />
                         </View>
                 </LinearGradient>
             </TouchableWithoutFeedback>
@@ -170,25 +173,25 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     gradient: {
-        flex: 1,
+        height: height,
         alignItems: "center",
     },
     loginContainer: {
-        height: 480,
-        width: 250,
-        borderWidth: 1,
-        borderColor: "white",
+        height: 0.75*height,
+        width: 0.8*width,
         borderRadius: 5,
         position: "absolute",
         top: 100,
         alignItems: "center",
     },
     input: {
-        height: 40,
-        width: "80%",
-        backgroundColor: "white",
-        textAlign: "center",
-        marginTop: 20
+        height: 0.12*0.5*height,
+        width: 0.9*0.8*width,
+        borderBottomColor: "white",
+        borderBottomWidth: 1,
+        textAlign: "left",
+        marginTop: 0.05*0.5*height,
+        color: "white"
     }
 });
 

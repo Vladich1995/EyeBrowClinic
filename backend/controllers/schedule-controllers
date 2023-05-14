@@ -248,8 +248,100 @@ const firebaseConfig = {
             }
           }
       });
-
+      
+      
       res.json({orders: orders, ordersInDay: ordersInDay, success: true});
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
+  const getOrdersByClient = (req, res, next) => {
+    const clientEmail = req.body.clientEmail;
+    const ref = db.ref('Orders');
+    ref.once('value', async function(dataSnapshot) {
+      const currentDate = new Date();
+      const orders = [];
+      dataSnapshot.forEach(function(childSnapshot) {
+          let childData = childSnapshot.val();
+          const childKey = childSnapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          let givenDate = new Date(childData["day"]);
+          if(currentDate <= givenDate && childData["email"] == clientEmail){
+            orders.push(childData);
+          }
+      });
+      res.json({ordersByClient: orders, success: true});
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
+  const deleteOrder = (req, res, next) => {
+    const {date, time} = req.body;
+    const ref = db.ref('Orders');  
+    ref.once('value', async function(dataSnapshot) {
+      dataSnapshot.forEach(function(childSnapshot) {
+          let childData = childSnapshot.val();
+          const childKey = childSnapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          console.log(childData)
+          if(childData["day"] == date && childData["time"] == time){
+            const ref2 = db.ref(`Orders/${childKey}`);
+            ref2.remove().then(() => {
+              console.log("Order removed successfully");
+              res.json({success: true});
+            }).catch((error) => {
+              console.error("Error removing order:", error);
+              res.json({success: false});
+            });
+          }
+      });
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
+  const getAllHistoryOrders = (req, res, next) => {
+    const ref = db.ref('Orders');
+    ref.once('value', async function(dataSnapshot) {
+      const currentDate = new Date();
+      const orders = [];
+      dataSnapshot.forEach(function(childSnapshot) {
+          let childData = childSnapshot.val();
+          const childKey = childSnapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          let givenDate = new Date(childData["day"]);
+          if(currentDate >= givenDate){
+            orders.push(childData);
+          }
+      });
+      res.json({orders: orders, success: true});
+    }, function(error) {
+      console.error(error);
+      res.json({success: false});
+    });
+  }
+
+  const getHistoryOrdersByClient = (req, res, next) => {
+    const clientEmail = req.body.clientEmail;
+    const ref = db.ref('Orders');
+    ref.once('value', async function(dataSnapshot) {
+      const currentDate = new Date();
+      const orders = [];
+      dataSnapshot.forEach(function(childSnapshot) {
+          let childData = childSnapshot.val();
+          const childKey = childSnapshot.key;
+          const firstKey = Object.keys(childData)[0];
+          let givenDate = new Date(childData["day"]);
+          if(currentDate >= givenDate && childData["email"] == clientEmail){
+            orders.push(childData);
+          }
+      });
+      res.json({orders: orders, success: true});
     }, function(error) {
       console.error(error);
       res.json({success: false});
@@ -266,3 +358,7 @@ const firebaseConfig = {
   exports.completeOrder = completeOrder;
   exports.getOrdersByDay = getOrdersByDay;
   exports.getAllOrders = getAllOrders;
+  exports.getOrdersByClient = getOrdersByClient;
+  exports.deleteOrder = deleteOrder;
+  exports.getAllHistoryOrders = getAllHistoryOrders;
+  exports.getHistoryOrdersByClient = getHistoryOrdersByClient;

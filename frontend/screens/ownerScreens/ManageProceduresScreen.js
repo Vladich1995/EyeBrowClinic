@@ -24,9 +24,6 @@ function ManageProceduresScreen ({route}) {
     const [procedureForOrder, setProcedureForOrder] = useState(null);
     const [isOrdering, setIsOrdering] = useState(false);
     const [timeOptions, setTimeOptions] = useState(null);
-
-    const keyExtractor = (item, index) => item.id;
-
     useEffect(()=>{
         async function getTimeSettings () {
             if(!isOwner){
@@ -43,14 +40,14 @@ function ManageProceduresScreen ({route}) {
         }
         getTimeSettings();
     },[countTimes]);
-
+//////////////////////
     useEffect(()=>{
         async function displayProcedures () {
             try{
                 const response = await fetch(`http://${ip}:3000/procedure/getList`).then((response) => {
                     return response.json();
                 }).then((data) => {
-                    setFetchedProcedureList(data.procedureList);
+                    setFetchedProcedureList(data.procedureList); 
                 });
             } catch (err) {
                 console.log(err);
@@ -58,7 +55,7 @@ function ManageProceduresScreen ({route}) {
         }
         displayProcedures();
     },[count]);
-
+///////////////////////////////
     useEffect(()=>{
         if(fetchedProcedureList != null && timeOptions == isOwner ? null : !null){
             setIsRendered(true);
@@ -102,6 +99,7 @@ function ManageProceduresScreen ({route}) {
         setProcedureForOrder(null);
     }
 
+
     if(isLoading){
         return(
             <View style={styles.loadingContainer}>
@@ -119,8 +117,8 @@ function ManageProceduresScreen ({route}) {
                     {isRendered && <FlatList
                                         data={fetchedProcedureList}
                                         renderItem={({item}) => <ProcedureItem procedure={item} onFocusChange={handleFocusChange} onOrder={orderProcedureHandler} isOwner={isOwner} token={token}
-                                        focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)} ip={ip}  />}
-                                        keyExtractor={keyExtractor}
+                                        focusedName={focusedItem} inc={()=>setCount(count+1)} onView={viewInfoHandler} startLoading={()=>setIsLoading(true)} stopLoading={()=>setIsLoading(false)}  ip={ip} />}
+                                        keyExtractor={(item, index) => index.toString()}
                                         showsVerticalScrollIndicator={false}
                                     />}  
                 </View>

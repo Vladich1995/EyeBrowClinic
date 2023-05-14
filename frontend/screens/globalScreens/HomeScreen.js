@@ -17,8 +17,8 @@ function HomeScreen ({route}) {
     return (
         <Drawer.Navigator screenOptions={{tabBarLabelStyle: { textTransform: 'none' }, drawerActiveBackgroundColor: 'pink', headerTitleAlign: 'center' }} initialRouteName="procedures">
             <Drawer.Screen name="procedures" component={ManageProceduresScreen} options={{ title: 'Procedures' }} initialParams={{token: route.params.token, isOwner: isOwner, ip: ip}} />
-            <Drawer.Screen name="schedule" component={CalendarScreen} options={{ title: 'Schedule' }} initialParams={{isOwner: isOwner, ip: ip}} />
-            <Drawer.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} />
+            <Drawer.Screen name="schedule" component={CalendarScreen} options={{ title: 'Schedule' }} initialParams={{isOwner: isOwner, ip: ip, token: route.params.token}} />
+            <Drawer.Screen name="history" component={HistoryScreen} options={{ title: 'History' }} initialParams={{isOwner: isOwner, ip: ip, token: route.params.token}} />
             <Drawer.Screen name="about" component={ClinicInfoScreen} options={{ title: 'About' }} initialParams={{isOwner: isOwner, ip: ip}} />
         </Drawer.Navigator> 
     );

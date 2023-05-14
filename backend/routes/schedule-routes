@@ -12,5 +12,9 @@ router. get("/gettimes", scheduleControllers.getTimeSettings);
 router.post("/order", scheduleControllers.completeOrder);
 router.get("/getorders/:day", scheduleControllers.getOrdersByDay);
 router.get("/getallorders", scheduleControllers.getAllOrders);
+router.post("/getordersbyclient", scheduleControllers.getOrdersByClient);
+router.post("/deleteorder", scheduleControllers.deleteOrder);
+router.get("/getallhistoryorders", scheduleControllers.getAllHistoryOrders);
+router.post("/gethistoryordersbyclient", scheduleControllers.getHistoryOrdersByClient);
 
 module.exports = router;

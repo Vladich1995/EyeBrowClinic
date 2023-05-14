@@ -14,10 +14,10 @@ const styles = StyleSheet.create({
     wrapper: {
         alignSelf: "center",
         width: "95%",
-        height: "15%",
+        height: "10%",
         borderRadius: 30,
         overflow: "hidden",
-        marginTop: 20
+        marginTop: 20,
     },
     container: {
         alignSelf: "center",
@@ -34,7 +34,6 @@ const styles = StyleSheet.create({
     text: {
         fontSize: 20,
         color: "white",
-
     }
 });
 

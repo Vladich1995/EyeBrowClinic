@@ -1,10 +1,13 @@
-import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard, Button } from "react-native";
+import { SafeAreaView, View, Alert, StyleSheet, Dimensions, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard, Button } from "react-native";
 import { useEffect, useState, useContext } from "react";
 import { LinearGradient } from "expo-linear-gradient";
 import * as ImagePicker from 'expo-image-picker';
 import {encode} from 'base-64';
 import * as ImageManipulator from 'expo-image-manipulator';
-import LoginButton from "../buttons/LoginButton";
+import RegisterButton from "../buttons/RegisterButton";
+
+const height = Dimensions.get('window').height;
+const width = Dimensions.get('window').width;
 
 function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading, ip}) {
     const [procedureName, setProcedureName] = useState("");
@@ -21,36 +24,39 @@ function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading, ip}) 
     const [descriptionFocused, setDescriptionFocused] = useState(false);
 
     async function addProcedureHandler() {
-        startLoading();
-        try{
-            const response = await fetch(`http://${ip}:3000/procedure/add`,{
-            method: 'POST',
-            headers: {
-              Accept: 'application/json',
-              'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({
-              pName: procedureName,
-              pDuration: procedureDuration,
-              pPrice: procedurePrice,
-              pGoal: procedureGoal,
-              pDescription: procedureDescription,
-              pImage: pImage
-            }),
-            }).then((response) => {
-                return response.json();
-            }).then((data) => {
-                inc();
-                cancelHandler();
-                if(!data.success){
-                    Alert.alert(data.message, "Something went wrong..",[
-                        {text: "ok", style: "cancel"},
-                    ])
-                }
-            });
-        } catch (err) {
-            console.log(err);
+        if(procedureName != "" && procedureDuration != "" && procedurePrice != "" && procedureGoal != "" && procedureDescription != ""){
+            startLoading();
+            try{
+                const response = await fetch(`http://${ip}:3000/procedure/add`,{
+                method: 'POST',
+                headers: {
+                Accept: 'application/json',
+                'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                pName: procedureName,
+                pDuration: procedureDuration,
+                pPrice: procedurePrice,
+                pGoal: procedureGoal,
+                pDescription: procedureDescription,
+                pImage: pImage
+                }),
+                }).then((response) => {
+                    return response.json();
+                }).then((data) => {
+                    inc();
+                    cancelHandler();
+                    if(!data.success){
+                        Alert.alert(data.message, "Something went wrong..",[
+                            {text: "ok", style: "cancel"},
+                        ])
+                    }
+                });
+            } catch (err) {
+                console.log(err);
+            }
         }
+        
     }
 
     // const imageUploadHandler = async () => {
@@ -111,18 +117,20 @@ function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading, ip}) 
 
     return (
         <View style={styles.container}>
-            <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
-                <TextInput style={[styles.shortInput,{borderWidth: nameFocused ? 1 : 0}]} placeholder="Procedure name" onFocus={()=>setNameFocused(true)} onBlur={()=>setNameFocused(false)} onChangeText={setProcedureName} value={procedureName} />
-                <TextInput style={[styles.shortInput,{borderWidth: durationFocused ? 1 : 0}]} placeholder="duration" onFocus={()=>setDurationFocused(true)} onBlur={()=>setDurationFocused(false)} onChangeText={setProcedureDuration} value={procedureDuration} />
-                <TextInput style={[styles.shortInput,{borderWidth: priceFocused ? 1 : 0}]} placeholder="Price" onFocus={()=>setPriceFocused(true)} onBlur={()=>setPriceFocused(false)} onChangeText={setProcedurePrice} value={procedurePrice} />
-                <TextInput style={[styles.shortInput,{borderWidth: goalFocused ? 1 : 0}]} placeholder="Goal" onFocus={()=>setGoalFocused(true)} onBlur={()=>setGoalFocused(false)} onChangeText={setProcedureGoal} value={procedureGoal} />
-                <Button title="Browse image" style={styles.nativeButton} onPress={imageUploadHandler} />
-                <TextInput style={[styles.longInput,{borderWidth: descriptionFocused ? 1 : 0, textAlign: !descriptionFocused ? "center" : "auto"}]} placeholder="Description" onFocus={()=>setDescriptionFocused(true)} onBlur={()=>setDescriptionFocused(false)} onChangeText={setProcedureDescription} value={procedureDescription} multiline={true} textAlignVertical="top" />
-                <View style={styles.buttonsContainer}>
-                    <LoginButton text="Submit" onPress={addProcedureHandler} />
-                    <LoginButton text="Cancel" onPress={cancelHandler} />
-                </View>
-            </LinearGradient>
+            <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
+                <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                    <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="Procedure name" onFocus={()=>setNameFocused(true)} onBlur={()=>setNameFocused(false)} onChangeText={setProcedureName} value={procedureName} />
+                    <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="duration" onFocus={()=>setDurationFocused(true)} onBlur={()=>setDurationFocused(false)} onChangeText={setProcedureDuration} value={procedureDuration} />
+                    <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="Price" onFocus={()=>setPriceFocused(true)} onBlur={()=>setPriceFocused(false)} onChangeText={setProcedurePrice} value={procedurePrice} />
+                    <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="Goal" onFocus={()=>setGoalFocused(true)} onBlur={()=>setGoalFocused(false)} onChangeText={setProcedureGoal} value={procedureGoal} />
+                    <View style={{marginTop: 0.027*height,}}>
+                        <Button title="Browse image" onPress={imageUploadHandler} />
+                    </View>
+                    <TextInput style={[styles.longInput]} placeholderTextColor={"white"} placeholder="Description" onFocus={()=>setDescriptionFocused(true)} onBlur={()=>setDescriptionFocused(false)} onChangeText={setProcedureDescription} value={procedureDescription} multiline={true} textAlignVertical="top" />
+                    <RegisterButton text="Submit" onPress={addProcedureHandler} />
+                    <RegisterButton text="Cancel" onPress={cancelHandler} />
+                </LinearGradient>
+            </TouchableWithoutFeedback>
         </View>
     );
 }
@@ -130,36 +138,35 @@ function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading, ip}) 
 const styles = StyleSheet.create({
     container: {
         position: "absolute",
-        height: 450,
-        width: 250,
-        top: 100,
+        height: 0.73*height,
+        width: 0.8*width,
+        top: 0.12*height,
+        borderWidth: 1,
+        borderRadius: 30,
         zIndex: 1,
     },
     gradient: {
-        flex: 1,
-        alignItems: "center"
+        height: 0.73*height,
+        alignItems: "center",
+        borderRadius: 30,
     },
     shortInput: {
-        height: 30,
-        width: "80%",
-        backgroundColor: "white",
-        marginTop: 20,
-        textAlign: "center",
+        height: 0.07*0.6*height,
+        width: 0.8*0.8*width,
+        marginTop: 0.027*height,
+        textAlign: "left",
+        borderBottomWidth: 1,
+        borderBottomColor: "white",
+        color: "white"
     },
     longInput: {
-        height: 100,
-        width: "80%",
-        backgroundColor: "white",
-        marginTop: 20,
+        height: 0.2*0.6*height,
+        width: 0.8*0.8*width,
+        marginTop: 0.027*height,
+        color: "white",
+        borderWidth: 1,
+        borderColor: "white"
     },
-    buttonsContainer: {
-        flexDirection: "row",
-        justifyContent: "space-between",
-        width: "80%"
-    },
-    nativeButton: {
-        marginTop: 20,
-    }
 });
 
 export default AddProcedureForm;

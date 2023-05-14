@@ -1,17 +1,30 @@
 import { SafeAreaView, View, StyleSheet, FlatList, PanResponder, Animated, } from "react-native";
-import {useEffect, useState } from "react";
+import {useEffect, useState} from "react";
+import { useIsFocused } from '@react-navigation/native';
 import { LinearGradient } from "expo-linear-gradient";
 import {Calendar} from 'react-native-calendars';
 import colors from '../../Utility/colors'
 import OrderItem from "../../components/OrderItem";
+import ClientOrderItem from "../../components/ClientOrderItem";
 
-function MeetingsScreen ({route, isOwner2, ip2}) {
+function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
+    const [count, setCount] = useState(0);
+    const isFocused = useIsFocused();
     const [isOwner, setIsOwner] = useState(null);
     const [ip, setIp] = useState(null);
     const [allOrders, setAllOrders] = useState(null);
     const [markedDates, setMarkedDates] = useState({});
     const [ordersInSelectedDay, setOrdersInSelectedDay] = useState(null);
+    const [ordersByClient, setOrdersByClient] = useState(null);
     const timeZoneOffsetInSeconds = new Date().getTimezoneOffset() * 60;
+
+    // useEffect(() => {
+    //     console.log(count);
+    //     if(!isFocused || !screenIsFocused){
+    //         setCount((prev)=> prev+1)
+    //     }
+    // }, [screenIsFocused, isFocused]);
+
     useEffect(()=>{
         if(route){
             setIp(route.params.ip);
@@ -50,10 +63,58 @@ function MeetingsScreen ({route, isOwner2, ip2}) {
                 console.log(err);
             }
         }
-        if(ip != null){
-            getAllOrders();
+
+        async function getOrdersByClient () {
+            try{
+                const response = await fetch(`http://${ip}:3000/schedule/getordersbyclient`,{
+                method: 'POST',
+                headers: {
+                    Accept: 'application/json',
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    clientEmail: token.email
+                }),
+                }).then((response) => {
+                    return response.json();
+                }).then((data) => {
+                    //const ordersByClientSorted = data.ordersByClient.sort((a, b) => parseInt(a["time"].split(":")) - parseInt(b["time"].split(":")));
+                    const ordersByClientSorted = data.ordersByClient.sort((a, b) => {
+                        // Compare the dates first
+                        if (a.day !== b.day) {
+                          return a.day.localeCompare(b.day);
+                        }
+                      
+                        // If the dates are the same, compare the times
+                        const timeA = a.time.split(":");
+                        const timeB = b.time.split(":");
+                      
+                        // Compare the hours first
+                        if (timeA[0] !== timeB[0]) {
+                          return parseInt(timeA[0]) - parseInt(timeB[0]);
+                        }
+                      
+                        // If the hours are the same, compare the minutes
+                        return parseInt(timeA[1]) - parseInt(timeB[1]);
+                      });
+                    setOrdersByClient(ordersByClientSorted);
+                });
+            } catch (err) {
+                console.log(err);
+            }
         }
-      }, [isOwner, ip]);
+
+        if(isOwner == true){
+            if(ip != null){
+                getAllOrders();
+            }
+        }
+        else{
+            if(ip != null){
+                getOrdersByClient();
+            }
+        }
+      }, [isOwner, ip, screenIsFocused, isFocused, count]);
 
     
       const getDaysInMonth = (month, year) => {
@@ -68,7 +129,8 @@ function MeetingsScreen ({route, isOwner2, ip2}) {
                 orders.push(allOrders[i]);
             }
         }
-        setOrdersInSelectedDay(orders);
+        const ordersSorted = orders.sort((a, b) => parseInt(a["time"].split(":")) - parseInt(b["time"].split(":")));
+        setOrdersInSelectedDay(ordersSorted);
     }
 
     if (isOwner == true) {
@@ -80,10 +142,20 @@ function MeetingsScreen ({route, isOwner2, ip2}) {
                 <View style={styles.ordersContainer}>
                     <FlatList
                         data={ordersInSelectedDay}
-                        renderItem={({item}) => <OrderItem order={item} />}
-                        
+                        renderItem={({item}) => <OrderItem order={item} ip={ip2} />}
+                        keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
+            </SafeAreaView>
+        );
+    } else {
+        return (
+            <SafeAreaView style={styles.page}>
+                <FlatList
+                        data={ordersByClient}
+                        renderItem={({item}) => <ClientOrderItem order={item} ip={ip2} inc={()=>setCount(count+1)} />}
+                        keyExtractor={item => Math.random()}
+                    />
             </SafeAreaView>
         );
     }

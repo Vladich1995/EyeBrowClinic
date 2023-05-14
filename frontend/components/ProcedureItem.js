@@ -2,8 +2,7 @@ import { View, ImageBackground, Pressable, StyleSheet, Platform, StatusBar,Dimen
 import { useEffect, useState } from "react";
 import OptionsButton from "../buttons/OptionsButton";
 import {decode} from 'base-64';
-import { Buffer } from 'buffer';
-import * as ImageManipulator from 'expo-image-manipulator';
+
 
 function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, onView, startLoading, isOwner, token, ip}) {
     const [isPressed, setIsPressed] = useState(false);
@@ -63,7 +62,6 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, on
         onOrder(procedure);
     }
 
-   
 
     return (
         <Pressable style={styles.container} onPress={pressHandler} >
