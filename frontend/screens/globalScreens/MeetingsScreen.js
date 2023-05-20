@@ -7,7 +7,7 @@ import colors from '../../Utility/colors'
 import OrderItem from "../../components/OrderItem";
 import ClientOrderItem from "../../components/ClientOrderItem";
 
-function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
+function MeetingsScreen ({route}) {
     const [count, setCount] = useState(0);
     const isFocused = useIsFocused();
     const [isOwner, setIsOwner] = useState(null);
@@ -18,22 +18,16 @@ function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
     const [ordersByClient, setOrdersByClient] = useState(null);
     const timeZoneOffsetInSeconds = new Date().getTimezoneOffset() * 60;
 
-    // useEffect(() => {
-    //     console.log(count);
-    //     if(!isFocused || !screenIsFocused){
-    //         setCount((prev)=> prev+1)
-    //     }
-    // }, [screenIsFocused, isFocused]);
 
     useEffect(()=>{
-        if(route){
             setIp(route.params.ip);
-            setIsOwner(route.params.isOwner);
-        }else{
-            setIp(ip2);
-            setIsOwner(isOwner2);
-        }
+            setIsOwner(route.params.isOwner);  
     }, [])
+
+    useEffect(()=>{
+        console.log(isFocused)
+    }, [isFocused])
+
       // 1-3,4-6,7-9,10+
       useEffect(()=>{
         async function getAllOrders () {
@@ -73,7 +67,7 @@ function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
                     'Content-Type': 'application/json',
                 },
                 body: JSON.stringify({
-                    clientEmail: token.email
+                    clientEmail: route.params.token.email
                 }),
                 }).then((response) => {
                     return response.json();
@@ -114,7 +108,7 @@ function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
                 getOrdersByClient();
             }
         }
-      }, [isOwner, ip, screenIsFocused, isFocused, count]);
+      }, [isOwner, ip, isFocused, count]);
 
     
       const getDaysInMonth = (month, year) => {
@@ -142,7 +136,7 @@ function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
                 <View style={styles.ordersContainer}>
                     <FlatList
                         data={ordersInSelectedDay}
-                        renderItem={({item}) => <OrderItem order={item} ip={ip2} />}
+                        renderItem={({item}) => <OrderItem order={item} ip={ip} />}
                         keyExtractor={(item, index) => index.toString()}
                     />
                 </View>
@@ -153,7 +147,7 @@ function MeetingsScreen ({route, isOwner2, ip2, token, screenIsFocused}) {
             <SafeAreaView style={styles.page}>
                 <FlatList
                         data={ordersByClient}
-                        renderItem={({item}) => <ClientOrderItem order={item} ip={ip2} inc={()=>setCount(count+1)} />}
+                        renderItem={({item}) => <ClientOrderItem order={item} ip={ip} inc={()=>setCount(count+1)} />}
                         keyExtractor={item => Math.random()}
                     />
             </SafeAreaView>

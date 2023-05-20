@@ -1,6 +1,7 @@
-import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, Keyboard, Text } from "react-native";
+import { SafeAreaView, View, Alert, StyleSheet, Platform, StatusBar,TextInput,TouchableWithoutFeedback, FlatList, Text } from "react-native";
 import { useEffect, useState } from "react";
-import { LinearGradient } from "expo-linear-gradient";
+import HistoryOrderClient from "../../components/HistoryOrderClient";
+
 
 function HistoryScreen ({route}) {
     const ip = route.params.ip;
@@ -8,6 +9,15 @@ function HistoryScreen ({route}) {
     const [token, setToken] = useState(route.params.token);
     const [allHistoryOrders, setAllHistoryOrders] = useState(null);
     const [historyOrdersByClient, setHistoryOrdersByClient] = useState(null);
+    const [searchWord, setSearchWord] = useState("");
+
+    function formatDateString(dateString) {
+        const parts = dateString.split("-");
+        const day = parts[2];
+        const month = parts[1];
+        const year = parts[0];
+        return `${day}-${month}-${year}`;
+    }
 
     useEffect(()=>{
         async function getOwnerHistoryOrders () {
@@ -97,13 +107,32 @@ function HistoryScreen ({route}) {
         }
     }, [historyOrdersByClient, allHistoryOrders])
 
+
     return (
-        <View><Text>HistoryScreen</Text></View>
+        <SafeAreaView style={styles.container}>
+            {(!isOwner) && 
+            (<View>
+                <TextInput style={styles.clientSearch} placeholder="חפש/י לפי שם פרוצדורה או תאריך" onChangeText={setSearchWord} />
+                <FlatList
+                    data={historyOrdersByClient}
+                    renderItem={({item}) => searchWord == "" ? <HistoryOrderClient order={item} />: (searchWord != "" && (item.pName.includes(searchWord) || formatDateString(item.day).includes(searchWord)) ? <HistoryOrderClient order={item} /> : null) }
+                    keyExtractor={item => Math.random()}
+                />
+            </View>)}
+        </SafeAreaView>
     );
 }
 
 const styles = StyleSheet.create({
-
+    container: {
+        flex: 1,
+    },
+    clientSearch: {
+        borderWidth: 0.5,
+        fontSize: 15,
+        backgroundColor: 'white',
+        textAlign: "center"
+    }
 });
 
 export default HistoryScreen;

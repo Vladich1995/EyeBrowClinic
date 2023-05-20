@@ -68,8 +68,8 @@ function ProcedureItem ({procedure, onFocusChange, focusedName, inc, onOrder, on
             <ImageBackground source={{ uri: `data:image/png;base64,${decodedImage}` }} style={styles.image} opacity= {isPressed ? 0.5 : 0.7} >
                 {!(isPressed) && <Text style={styles.text}>{procedure.pName}</Text>}
                 {isPressed && <View style={styles.buttonContainer}>
-                    {isOwner ? <OptionsButton text="Delete" onPress={removeProcedureHandler} /> : <OptionsButton text="Order" onPress={orderProcedureHandler} /> }
-                    <OptionsButton text="View" onPress={viewInfoHandler} />
+                    {isOwner ? <OptionsButton text="Delete" onPress={removeProcedureHandler} color="#18C3F8" /> : <OptionsButton text="Order" onPress={orderProcedureHandler} color="#18C3F8" /> }
+                    <OptionsButton text="View" onPress={viewInfoHandler} color="#18C3F8" />
                 </View>}
             </ImageBackground>
         </Pressable>

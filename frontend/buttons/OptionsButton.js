@@ -1,10 +1,10 @@
 import { View, Text, StyleSheet, Platform, Pressable} from "react-native";
 
-function OptionsButton ({text, onPress}) {
+function OptionsButton ({text, onPress, color}) {
 
     return (
         <View style={styles.wrapper}>
-            <Pressable style={styles.container} android_ripple={{color: "sky-blue"}} onPress={onPress} >
+            <Pressable style={[styles.container, {backgroundColor: color, }]} android_ripple={{color: "sky-blue"}} onPress={onPress} >
                 <Text style={styles.text}> {text} </Text>
             </Pressable>
         </View>
@@ -20,7 +20,6 @@ const styles = StyleSheet.create({
     },
     container: {
         alignSelf: "center",
-        backgroundColor: "#A9B8B6",
         alignItems: "center",
         justifyContent: "center",
         borderRadius: 10,

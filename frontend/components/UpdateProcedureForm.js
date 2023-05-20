@@ -6,6 +6,7 @@ function UpdateProcedureForm ({prop, cancel, procedure, inc, pageUpdate, ip}) {
     const [title, setTitle] = useState("");
     const [newValue, setNewValue] = useState("");
     
+
     useEffect(()=>{
         if(prop == "pName"){
             setTitle("שם פרוצדורה");

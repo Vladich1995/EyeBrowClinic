@@ -5,11 +5,9 @@ import { LinearGradient } from "expo-linear-gradient";
 function AddButton ({onPress}) {
     return (
         <KeyboardAvoidingView style={styles.wrapper}>
-            <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
-                <Pressable style={styles.button} android_ripple={{color: "sky-blue"}} onPress={() =>onPress(true)} >
+            <Pressable style={styles.button} android_ripple={{color: "sky-blue"}} onPress={() =>onPress(true)} >
                     <Text style={styles.text}>+</Text>
-                </Pressable>
-            </LinearGradient>
+            </Pressable>
         </KeyboardAvoidingView>
     );
 }
@@ -30,15 +28,13 @@ const styles = StyleSheet.create({
         width: 50,
         borderRadius: 50,
         justifyContent: "center",
-        alignItems: "center"
+        alignItems: "center",
+        backgroundColor: "#422D74"
     },
     text: {
         fontSize: 20,
         color: "white",
     },
-    gradient: {
-        flex: 1,
-    }
 });
 
 export default AddButton;

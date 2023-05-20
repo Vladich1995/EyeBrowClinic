@@ -151,7 +151,7 @@ function RegistrationScreen ({route, navigation}) {
         <SafeAreaView style={styles.pageContainer}>
             <StatusBar style="auto" />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                         <View style={styles.loginContainer}>
                             <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Name" onFocus={nameFocusHandler} onBlur={nameBlurHandler} onChangeText={setName}/>
                             <TextInput style={[styles.input]} placeholderTextColor={"white"} placeholder="Phone number" onFocus={phoneNumberFocusHandler} onBlur={phoneNumberBlurHandler} onChangeText={setPhoneNumber}/>

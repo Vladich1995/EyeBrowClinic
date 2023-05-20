@@ -318,7 +318,7 @@ function ScheduleSettingsScreen ({route}) {
 
     return (
         <ScrollView style={styles.container}>
-            <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+            <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                 <View style={styles.calendarContainer}>
                     {isLoading ? <ActivityIndicator size="large" color="#0000ff" /> : <Calendar onDayLongPress={daySelectHandler} markedDates={markedDates} timeZoneOffsetInSeconds={timeZoneOffsetInSeconds} /> }
                 </View>

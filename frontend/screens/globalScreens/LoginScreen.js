@@ -30,7 +30,7 @@ function LoginScreen ({route, navigation}) {
               console.error(e);
             }
           };
-        //removeToken();
+        removeToken();
 
         const getToken = async () => {
             try {
@@ -142,7 +142,7 @@ function LoginScreen ({route, navigation}) {
         <SafeAreaView style={styles.pageContainer}>
             <StatusBar style="auto" />
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                         <View style={styles.loginContainer}>
                             <TextInput style={[styles.input,]} placeholderTextColor={"white"} placeholder="Email" onFocus={emailFocusHandler} onBlur={emailBlurHandler} onChangeText={setEmail} value={email}/>
                             <TextInput style={[styles.input,]} placeholderTextColor={"white"} placeholder="Password" onFocus={passwordFocusHandler} onBlur={passwordBlurHandler} onChangeText={setPassword} value={password} secureTextEntry={true} />

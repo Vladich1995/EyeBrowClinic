@@ -95,7 +95,7 @@ function ViewInfo ({procedure, onClose, inc, isOwner, ip}) {
         if(!updateImage){
             return (
                 <View style={styles.container}>
-                    <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                    <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                         {(propToUpdate != null) && <UpdateProcedureForm prop={propToUpdate} cancel={()=>setPropToUpdate(null)} procedure={procedure} inc={()=>inc()} pageUpdate={setNewValue} ip={ip} /> }
                         <ScrollView style={styles.scroll} scrollEventThrottle={25}>
                             <Pressable style={styles.titleContainer} android_ripple={{color: "sky-blue"}} onLongPress={()=>setPropToUpdate("pName")} >
@@ -125,7 +125,7 @@ function ViewInfo ({procedure, onClose, inc, isOwner, ip}) {
         else{
             return (
                 <View style={styles.container}>
-                    <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                    <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                         <View style={styles.imageButtons}>
                             <Button title="Browse" onPress={imageUpdateHandler} />
                             <Button title="cancel" onPress={()=>setUpdateImage(false)} />
@@ -138,7 +138,7 @@ function ViewInfo ({procedure, onClose, inc, isOwner, ip}) {
     else{
         return (
             <View style={styles.container}>
-                <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                     <ScrollView style={styles.scroll} scrollEventThrottle={25}>
                     <View style={styles.titleContainer} >
                         <Text style={styles.title} >{name}</Text>

@@ -7,7 +7,8 @@ import ProcedureItem from "../../components/ProcedureItem";
 import ViewInfo from "../../components/ViewInfo";
 import OrderProcedureForm from "../../components/OrderProcedureForm";
 
-function ManageProceduresScreen ({route}) {
+
+function ManageProceduresScreen ({navigation,route}) {
     const ip = route.params.ip;
     const [addProcedure,setAddProcedure] = useState(false);
     const [fetchedProcedureList, setFetchedProcedureList] = useState(null);
@@ -24,6 +25,9 @@ function ManageProceduresScreen ({route}) {
     const [procedureForOrder, setProcedureForOrder] = useState(null);
     const [isOrdering, setIsOrdering] = useState(false);
     const [timeOptions, setTimeOptions] = useState(null);
+
+    
+
     useEffect(()=>{
         async function getTimeSettings () {
             if(!isOwner){

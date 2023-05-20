@@ -118,7 +118,7 @@ function AddProcedureForm ({cancelHandler, inc, startLoading, stopLoading, ip}) 
     return (
         <View style={styles.container}>
             <TouchableWithoutFeedback onPress={Keyboard.dismiss} accessible={false}>
-                <LinearGradient colors={["#FD03B9","#A603FD"]} style={styles.gradient} >
+                <LinearGradient colors={["#FF67B3","#422D74"]} style={styles.gradient} >
                     <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="Procedure name" onFocus={()=>setNameFocused(true)} onBlur={()=>setNameFocused(false)} onChangeText={setProcedureName} value={procedureName} />
                     <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="duration" onFocus={()=>setDurationFocused(true)} onBlur={()=>setDurationFocused(false)} onChangeText={setProcedureDuration} value={procedureDuration} />
                     <TextInput style={[styles.shortInput]} placeholderTextColor={"white"} placeholder="Price" onFocus={()=>setPriceFocused(true)} onBlur={()=>setPriceFocused(false)} onChangeText={setProcedurePrice} value={procedurePrice} />

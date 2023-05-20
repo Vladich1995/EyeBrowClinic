@@ -9,7 +9,7 @@ import HomeScreen from './screens/globalScreens/HomeScreen';
 
 const Stack = createNativeStackNavigator();
 export default function App() {
-  const ip = "192.168.1.12";
+  const ip = "192.168.137.129";
 
   useEffect(() => {
     const backAction = () => {
